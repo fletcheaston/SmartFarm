@@ -66,7 +66,7 @@ void setup() {
   smf.setupTemps();
 
   //read functions...
-  Watermark = smf.readWM_West(BoardID);//wm1,2,3
+  Watermark = smf.readWM_West(BoardID,1,2,3);//wm1,2,3
   delay(1000);
   Temperature_West = smf.readTemps(BoardID, 1, 2, 3);
   delay(1000);
