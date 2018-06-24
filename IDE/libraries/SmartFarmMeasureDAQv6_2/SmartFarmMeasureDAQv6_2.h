@@ -26,7 +26,14 @@ class SmartFarmMeasure {
 		void readDecSensors(int numDecSens, String boardID);
 		void setupWM();
 		void test2_setupWM();
-		String readWM(String boardID);
+		//void readWM(String boardID);
+		String readWM(String boardID);//integrated mux circuit
+		String test_readWM(String boardID);
+		String test2_readWM(String boardID);
+		//void setupMUXAnalog(); deprecated for v6.2 and combined into setupMuxWM
+		//String readMUXAnalog(String boardID); deprecated for v6.2 and combined into setupMuxWM
+		String readWM_West(String boardID);
+		String readWM_East(String boardID);
 		void selectMuxPin(byte pin);
 		void setupAll();
 		void runAll(String boardID);
