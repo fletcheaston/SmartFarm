@@ -166,7 +166,7 @@ String SmartFarmMeasure::readVolts(String boardID) //Battery & Solar voltage rep
 {
   analogReference(EXTERNAL); // use AREF for reference voltage added 1/5/17
   String Text = boardID;
-  Text += F(" VOLTS ");
+  Text += F(" Voltage: ");
   int BatVi = analogRead(readBatpin); //A6 Battery Voltage Pin
   int SolVi = analogRead(readSolpin); //A7 Solar Voltage pin
   float BatVF = (BatVi * 2.0 * 3.3) / 1023.0; //battery voltage the 2.0 and 3600 should be measured, though each board will vary slightly
@@ -184,7 +184,7 @@ String SmartFarmMeasure::timeStamp(String boardID) //RTC function
   byte second, minute, hour, dayOfWeek, dayOfMonth, month, year;
   String M = ""; String D = ""; String Y = ""; String HR = ""; String MIN = ""; String S = ""; //strings for RTC
   String Text = boardID;
-  Text += F(" NTIME ");
+  Text += F(" Timestamp: ");
   // retrieve data from DS3231
   readDS3231time(&second, &minute, &hour, &dayOfWeek, &dayOfMonth, &month,
                  &year);
@@ -353,27 +353,29 @@ String SmartFarmMeasure::build_data_string(float* data, int numtempsens, String 
    * return:
    *     String: formated node and sensor ID
    **/
+
 String SmartFarmMeasure::readTemps(String boardID)
 {
-  String results;
-  uint8_t *address;
-  char fbuff[8];
-  float data;
+	String results;
+	uint8_t *address;
+	char fbuff[8];
+	float data;
 
-  results = boardID + " Temperatures 1-2: ";
+	results = boardID + " Temperatures 1-2: ";
 
-  sensors.requestTemperatures(); // Send the command to get temperatures, gets senors ready for measurement
+	sensors.requestTemperatures(); // Send the command to get temperatures, gets senors ready for measurement
+	int tempPosition[] = {0,1};
 
-  /*dtostrf(data[i], 5, 2, fbuff)
-  for (int i = 0;i < 2;i++)
-  {
-    address = storedAddress[i];
-    data = sensors.getTempC(address) + " ";
-    dtostrf(data[i], 5, 2, fbuff);
-    //results += fbuff + " ";
-  }
-  */
-  return results;
+	for (int i = 0;i < 2;i++)
+	{
+		address  = storedAddress[tempPosition[i]];
+		data = sensors.getTempC(address);
+		dtostrf(data, 5, 2, fbuff);
+		results += fbuff;
+		results += " ";
+	}
+
+	return results;
 }
 
 
@@ -576,7 +578,7 @@ String SmartFarmMeasure::setupDecSensors(String boardID) {
 
 
 String SmartFarmMeasure::readDecSensors(String boardID) {
-  String result = boardID +F(" DMECT");
+  String result = boardID +F(" Decagon:");
   // result ="Reading Decagon 5TE Sensors... \n";
   // result += "VWC(Dielectric) EC(dS/m) Temperature(Deg C)\n";
 

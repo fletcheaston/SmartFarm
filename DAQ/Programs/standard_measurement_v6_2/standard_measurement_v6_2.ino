@@ -41,11 +41,12 @@
 //updated library to make functions return strings to save them here and first serial print, then write to sd card.
 
 SmartFarmMeasure smf;
-String BoardID = "B3";
-String Time = "";
+String BoardID = "N7";
+String Timestamp = "";
 String Volts = "";
 String Watermark = "";
 String Temperature = "";
+String Decagon = "";
 
 void setup() {
   smf.finishUp();
@@ -57,32 +58,37 @@ void setup() {
  //smf.setRTCToComputerTime(__DATE__, __TIME__);
 
   //time and battery read functions
-  tStamp = smf.timeStamp(BoardID);
+  Timestamp = smf.timeStamp(BoardID);
   delay(1000);
-  voltLevels = smf.readVolts(BoardID);
+  Volts = smf.readVolts(BoardID);
   delay(1000);
 
+
   //sensor setup functions...
-  smf.setupWM();
-  smf.setupTemps();
+  smf.setupAll();
+  delay(1000);
 
   //read functions...
   Watermark = smf.readWM(BoardID);
   delay(1000);
   Temperature = smf.readTemps(BoardID);
   delay(1000);
+  Decagon = smf.readDecSensors(BoardID);
+  delay(1000);
 
   //print serial data section
   Serial.begin(57600);
   Serial.println(BoardID + " Upload ");// prints board ID and wireless programming upload on next wake
   delay(1000);
-  Serial.println(Time);// prints real-time clock data to serial port
+  Serial.println(Timestamp);// prints real-time clock data to serial port
   delay(1000);
   Serial.println(Volts);//prints voltage
   delay(1000);
   Serial.println(Watermark);//prints Watermark
   delay(1000);
   Serial.println(Temperature);//prints Temperature
+  delay(1000);
+  Serial.println(Decagon);//prints Decagon
   delay(1000);
   Serial.flush();
   Serial.end();
@@ -92,10 +98,11 @@ void setup() {
 
   //sd write section
   smf.setupSD();
-  smf.write2SD(Time);// writes real-time clock data to sd card
-  smf.write2SD(Volts);//writes voltage
+  smf.write2SD(Timestamp);// writes real-time clock data to sd card
+  smf.write2SD(Volts);//writes Voltage
   smf.write2SD(Watermark);//writes Watermark
   smf.write2SD(Temperature);//writes Temperature
+  smf.write2SD(Decagon);//writes Decagon
   smf.write2SD("newline");
 }
 
