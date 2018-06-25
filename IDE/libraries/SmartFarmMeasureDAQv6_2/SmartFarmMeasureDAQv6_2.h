@@ -10,18 +10,18 @@
 #include <Wire.h> //Decagon Sensor Library
 #include <SDI12.h> //Decagon Sensor Library
 #include <Arduino.h>
- 
+
 
 class SmartFarmMeasure {
 	public:
 		//SmartFarmMeasure();
 		//*******Node functions*******
 		void finishUp(); //wireless programming completed indicator to MCU from DAQ
-		
+
 		//*******Node hardware setup functions*******
 		//RTC
 		void setDS3231time(byte second, byte minute, byte hour, byte dayOfWeek, byte dayOfMonth, byte month, byte year);
-		void readDS3231time(byte *second,//read rtc 
+		void readDS3231time(byte *second,//read rtc
                     byte *minute,
                     byte *hour,
                     byte *dayOfWeek,
@@ -49,19 +49,19 @@ class SmartFarmMeasure {
 		//Decagon
 		//void setupDecSensors();//setup dec sensors
 		String setupDecSensors(String boardID); //setup dec sensors
-		
+
 		//*******sensor read functions*******
 		void runAll(String boardID);// reads all sensors
 		//watermark
-		String readWM(String boardID, int WMpos1, int WMpos2, int WMpos3);//read wm per position and pass as a string
+		String readWM(String boardID);//read wm per position and pass as a string
 		//DS18B20 temperature
-		//void readTemps(String boardID); 
+		//void readTemps(String boardID);
 		//String readTemps(String boardID);
 		String readTemps(String boardID, int tempPos1, int tempPos2, int tempPos3);
 		//Decagon
 		//void readDecSensors(String boardID);// read decagon sensors
 		String readDecSensors(String boardID); // read decagon sensors
-		//void printUpload(String boardID);	
+		//void printUpload(String boardID);
 		String printUpload(String boardID);	//prints "Upload" for WebIDE uploadiong on next wakeup; changed to NPROG begin/end
 
 	private:
@@ -77,7 +77,7 @@ class SmartFarmMeasure {
 		String takeDecMeasurement(char i); //decagon measurements
 		//void printBufferToScreen(char i);
 		boolean checkActive(char i);//checks decagon activity
-		boolean setTaken(byte i);//places decagon in addressRegister 
+		boolean setTaken(byte i);//places decagon in addressRegister
 		boolean setVacant(byte i);//sets vacant in addressRegister
 		boolean isTaken(byte i);// checks addressRegister for active sensor
 		char printInfo(char i);// identification information from a sensor
