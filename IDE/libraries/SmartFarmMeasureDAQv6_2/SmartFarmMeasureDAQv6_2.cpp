@@ -284,6 +284,7 @@ void SmartFarmMeasure::write2SD(String dataString) {
    *    tempPos2: (int) identifying value for sensor 2 (0-127 valid sensors, -1 for Null)
    *    tempPos3: (int) identifying value for sensor 3 (0-127 valid sensors, -1 for Null)
    **/
+
 void SmartFarmMeasure::get_temp(float* data, int numtempsens, int tempPos1, int tempPos2, int tempPos3)
 {
   sensors.requestTemperatures(); // Send the command to get temperatures, gets senors ready for measurement
@@ -300,37 +301,6 @@ void SmartFarmMeasure::get_temp(float* data, int numtempsens, int tempPos1, int 
   }
 }
 
-
-
-/** id_builder
-   * Constructs an ID string for Temperature sensor and node identification in the network
-   * The format looks like this "N3 ST123 "
-   * inputs:
-   *    boardID: (String) identifies which node in a network
-   *    tempPos1: (int) identifying value for sensor 1 (0-127 valid sensors, -1 for Null)
-   *    tempPos2: (int) identifying value for sensor 2 (0-127 valid sensors, -1 for Null)
-   *    tempPos3: (int) identifying value for sensor 3 (0-127 valid sensors, -1 for Null)
-   * return:
-   *     String: formated node and sensor ID
-   **/
-	String SmartFarmMeasure::id_builder(String boardID, int tempPos1, int tempPos2, int tempPos3)
-	{
-		String results = boardID;
-		if (tempPos1 == 1 && tempPos2 == 2 && tempPos3 == 3)
-		{
-			 results += F(" ST123 ");
-		}
-		else if (tempPos1 == 4 && tempPos2 == 5 && tempPos3 == 6)
-		{
-			results += (" ST456 ");
-		}
-		return results;
-	}
-
-
-
-
-
 /** build_data_string...
    * Builds a data string.
    * The format looks like this "27.00 27.00 27.00" or "NA NA NA" or a combination
@@ -340,7 +310,7 @@ void SmartFarmMeasure::get_temp(float* data, int numtempsens, int tempPos1, int 
    *    results: (String) node and sensor identifier
    * return:
    *     String: complete string of data and/or placeholders
-   **/
+   *
 String SmartFarmMeasure::build_data_string(float* data, int numtempsens, String results)
 {
   String NA = F("NA");
@@ -366,7 +336,7 @@ String SmartFarmMeasure::build_data_string(float* data, int numtempsens, String 
     results += ' ';
   }
   return results;
-}
+}*/
 
 
 
@@ -383,17 +353,27 @@ String SmartFarmMeasure::build_data_string(float* data, int numtempsens, String 
    * return:
    *     String: formated node and sensor ID
    **/
-String SmartFarmMeasure::readTemps(String boardID, int tempPos1, int tempPos2, int tempPos3)
+String SmartFarmMeasure::readTemps(String boardID)
 {
-  int numtempsens = 3;
-  float data[numtempsens];
-  String results;
+	String results;
+	uint8_t *address;
+	char fbuff[8];
+	float data;
 
-  get_temp(data, numtempsens, tempPos1, tempPos2, tempPos3);
-  results = id_builder(boardID, tempPos1, tempPos2, tempPos3);
-  return build_data_string(data, numtempsens, results);
+	results = boardID + " Temperatures 1-2: ";
+
+	sensors.requestTemperatures(); // Send the command to get temperatures, gets senors ready for measurement
+	dtostrf(data[i], 5, 2, fbuff)
+	for (int i = 0;i < 2;i++)
+	{
+		address = storedAddress[i];
+		data = sensors.getTempC(address) + " ";
+		dtostrf(data[i], 5, 2, fbuff);
+		results += fbuff + " ";
+	}
+
+	return results;
 }
-
 
 
 /*
@@ -890,7 +870,7 @@ String SmartFarmMeasure::readWM(String boardID) {
   byte WC = 0B00000000; //watermark connection check
   int WMPin1 = WMEvenPin;
   int WMPin2 = WMOddPin;
-  String WMdata = boardID + " Watermark:123456";
+  String WMdata = boardID + " Watermarks 1-6:";
 
   for (byte i = 0; i < 6; i++) // Go through ports 1-6 to read data
   {

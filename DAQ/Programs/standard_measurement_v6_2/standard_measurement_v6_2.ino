@@ -42,9 +42,10 @@
 
 SmartFarmMeasure smf;
 String BoardID = "B3";
-String tStamp = ""; String voltLevels = "";
+String Time = "";
+String Volts = "";
 String Watermark = "";
-String Temperature_West = ""; String Temperature_East = "";
+String Temperature = "";
 
 void setup() {
   smf.finishUp();
@@ -66,26 +67,22 @@ void setup() {
   smf.setupTemps();
 
   //read functions...
-  Watermark = smf.readWM(BoardID);//wm1,2,3
+  Watermark = smf.readWM(BoardID);
   delay(1000);
-  Temperature_West = smf.readTemps(BoardID, 1, 2, 3);
-  delay(1000);
-  Temperature_East = smf.readTemps(BoardID, 4, 5, 6);
+  Temperature = smf.readTemps(BoardID);
   delay(1000);
 
   //print serial data section
   Serial.begin(57600);
   Serial.println(BoardID + " Upload ");// prints board ID and wireless programming upload on next wake
   delay(1000);
-  Serial.println(tStamp);// prints real-time clock data to serial port
+  Serial.println(Time);// prints real-time clock data to serial port
   delay(1000);
-  Serial.println(voltLevels);//prints voltage
+  Serial.println(Volts);//prints voltage
   delay(1000);
   Serial.println(Watermark);//prints Watermark
   delay(1000);
-  Serial.println(Temperature_West);//prints Temperature
-  delay(1000);
-  Serial.println(Temperature_East);//prints Temperature
+  Serial.println(Temperature);//prints Temperature
   delay(1000);
   Serial.flush();
   Serial.end();
@@ -95,11 +92,10 @@ void setup() {
 
   //sd write section
   smf.setupSD();
-  smf.write2SD(tStamp);// writes real-time clock data to sd card
-  smf.write2SD(voltLevels);//writes voltage
+  smf.write2SD(Time);// writes real-time clock data to sd card
+  smf.write2SD(Volts);//writes voltage
   smf.write2SD(Watermark);//writes Watermark
-  smf.write2SD(Temperature_West);//writes Temperature
-  smf.write2SD(Temperature_East);//writes Temperature
+  smf.write2SD(Temperature);//writes Temperature
   smf.write2SD("newline");
 }
 

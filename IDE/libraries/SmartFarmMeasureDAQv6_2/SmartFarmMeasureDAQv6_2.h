@@ -57,7 +57,7 @@ class SmartFarmMeasure {
 		//DS18B20 temperature
 		//void readTemps(String boardID);
 		//String readTemps(String boardID);
-		String readTemps(String boardID, int tempPos1, int tempPos2, int tempPos3);
+		String readTemps(String boardID);
 		//Decagon
 		//void readDecSensors(String boardID);// read decagon sensors
 		String readDecSensors(String boardID); // read decagon sensors
@@ -66,8 +66,6 @@ class SmartFarmMeasure {
 
 	private:
 		//DS18B20 temperature
-		String build_data_string(float* data, int numtempsens, String results);//used for temp sensors
-		String id_builder(String boardID, int tempPos1, int tempPos2, int tempPos3);//used for temp sensors
 		void get_temp(float* data, int numtempsens, int tempPos1, int tempPos2, int tempPos3); //used for temp sensors
 		String getDevAddress(DeviceAddress deviceAddress);//used for temp sensors
 		//void printData(DeviceAddress deviceAddress);
