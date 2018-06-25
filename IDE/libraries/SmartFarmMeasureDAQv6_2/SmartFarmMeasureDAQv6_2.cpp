@@ -355,24 +355,25 @@ String SmartFarmMeasure::build_data_string(float* data, int numtempsens, String 
    **/
 String SmartFarmMeasure::readTemps(String boardID)
 {
-	String results;
-	uint8_t *address;
-	char fbuff[8];
-	float data;
+  String results;
+  uint8_t *address;
+  char fbuff[8];
+  float data;
 
-	results = boardID + " Temperatures 1-2: ";
+  results = boardID + " Temperatures 1-2: ";
 
-	sensors.requestTemperatures(); // Send the command to get temperatures, gets senors ready for measurement
-	dtostrf(data[i], 5, 2, fbuff)
-	for (int i = 0;i < 2;i++)
-	{
-		address = storedAddress[i];
-		data = sensors.getTempC(address) + " ";
-		dtostrf(data[i], 5, 2, fbuff);
-		results += fbuff + " ";
-	}
+  sensors.requestTemperatures(); // Send the command to get temperatures, gets senors ready for measurement
 
-	return results;
+  /*dtostrf(data[i], 5, 2, fbuff)
+  for (int i = 0;i < 2;i++)
+  {
+    address = storedAddress[i];
+    data = sensors.getTempC(address) + " ";
+    dtostrf(data[i], 5, 2, fbuff);
+    //results += fbuff + " ";
+  }
+  */
+  return results;
 }
 
 
