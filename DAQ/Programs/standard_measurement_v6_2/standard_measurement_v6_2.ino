@@ -50,6 +50,7 @@ String Decagon = "";
 
 void setup() {
   smf.finishUp();
+  Serial.begin(57600);
 
   Wire.begin();
   //uncomment the next line to set RTC time from compiling
@@ -77,7 +78,6 @@ void setup() {
   delay(1000);
 
   //print serial data section
-  Serial.begin(57600);
   Serial.println(BoardID + " Upload ");// prints board ID and wireless programming upload on next wake
   delay(1000);
   Serial.println(Timestamp);// prints real-time clock data to serial port

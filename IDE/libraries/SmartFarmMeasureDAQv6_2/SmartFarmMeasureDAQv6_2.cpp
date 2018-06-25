@@ -378,52 +378,6 @@ String SmartFarmMeasure::readTemps(String boardID)
 	return results;
 }
 
-
-/*
-  // This is before returning the temp sensor as a string
-  void SmartFarmMeasure::readTemps(String boardID) {
-  String NA = "NA";
-  String results = " ";
-  results += boardID + " ";
-  int i = 0;
-  int placeholder = MAX_SENSORS - numsens; // 4-count, expected value = 4-4,4-3,4-2,4-1,4-0 = 0,1,2,3,4 NAs to print
-  sensors.requestTemperatures();
-  // print the device information
-  for (i = 0; i < numsens; i++) { //sensors exist
-    // results += printData(therms[i]);
-    printData(therms[i]);
-  }
-  for (i = 0; i < placeholder; i++) {
-    results += NA + ' '; //should print NA NA NA NA if no sensors found. should print NA NA NA
-  }
-  Serial.print(results);
-  write2SD(results);
-  }
-
-  void SmartFarmMeasure::printData(DeviceAddress deviceAddress)
-  {
-  String result = "";
-  float tempC;
-  // float tempF;
-  // NOTE 8/12/17: Discovered that the float value hogs a lot of space when writing to the sd card, and so never really writes to it effectively.
-  // results += getDevAddress(deviceAddress);
-  // results += " ";
-  tempC = sensors.getTempC(deviceAddress);
-  // results += "Temp C: ";
-  //result = String(tempC, 2) + ' ';
-  result = "B2 55.60 55.78 54.20 54.23";
-
-  /*   results += " Temp F: ";
-    tempF = DallasTemperature::toFahrenheit(tempC);
-    results += String(tempF);
-  Serial.print(result);
-  write2SD(result);
-  }
-*/
-
-
-
-
 //setup temps should address the sensors, sort them and store them in an array to access in read temps west and east functions
 void SmartFarmMeasure::setupTemps() {
   //this function: counts devices, checks parasite power mode, calls the store address function, sets the precision, & sorts the devices
@@ -921,9 +875,8 @@ String SmartFarmMeasure::readWM(String boardID) {
     }
     Rs = (RArray[1] + RArray[2] + RArray[3]) / 3;
 
-    Rs = R;
     if (Rs > 0.0) {
-      Rstring = String(Rs, 3);
+      Rstring = String(Rs);
     }
     else
     {
