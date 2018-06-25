@@ -7,6 +7,7 @@
 //INCLUDED MUX FOR WATERMARK PROGRAM 12/29/17
 
 //BY: Caleb Fink
+//Updated by: Fletcher Easton
 
 //Logic vs hardware
 
@@ -257,7 +258,7 @@ void SmartFarmMeasure::write2SD(String dataString) {
       dataFile.close();
       //Serial.println("***SD Card written.***\n");
     }
-	else 
+	else
 	{
       dataFile.print(dataString);
       dataFile.close();
@@ -274,14 +275,14 @@ void SmartFarmMeasure::write2SD(String dataString) {
 
 
 
-  /** get_temp 
+  /** get_temp
    * Stores temperature data.
-   * inputs: 
+   * inputs:
    *    data: (float*) storage for temperature data (at least numtempsens big)
    *    numtempsens: (int) number of temperature sensors
-   *    tempPos1: (int) identifying value for sensor 1 (0-127 valid sensors, -1 for Null) 
-   *    tempPos2: (int) identifying value for sensor 2 (0-127 valid sensors, -1 for Null) 
-   *    tempPos3: (int) identifying value for sensor 3 (0-127 valid sensors, -1 for Null) 
+   *    tempPos1: (int) identifying value for sensor 1 (0-127 valid sensors, -1 for Null)
+   *    tempPos2: (int) identifying value for sensor 2 (0-127 valid sensors, -1 for Null)
+   *    tempPos3: (int) identifying value for sensor 3 (0-127 valid sensors, -1 for Null)
    **/
 void SmartFarmMeasure::get_temp(float* data, int numtempsens, int tempPos1, int tempPos2, int tempPos3)
 {
@@ -301,16 +302,16 @@ void SmartFarmMeasure::get_temp(float* data, int numtempsens, int tempPos1, int 
 
 
 
-/** id_builder 
+/** id_builder
    * Constructs an ID string for Temperature sensor and node identification in the network
    * The format looks like this "N3 ST123 "
-   * inputs: 
+   * inputs:
    *    boardID: (String) identifies which node in a network
-   *    tempPos1: (int) identifying value for sensor 1 (0-127 valid sensors, -1 for Null) 
-   *    tempPos2: (int) identifying value for sensor 2 (0-127 valid sensors, -1 for Null) 
-   *    tempPos3: (int) identifying value for sensor 3 (0-127 valid sensors, -1 for Null) 
+   *    tempPos1: (int) identifying value for sensor 1 (0-127 valid sensors, -1 for Null)
+   *    tempPos2: (int) identifying value for sensor 2 (0-127 valid sensors, -1 for Null)
+   *    tempPos3: (int) identifying value for sensor 3 (0-127 valid sensors, -1 for Null)
    * return:
-   *     String: formated node and sensor ID 
+   *     String: formated node and sensor ID
    **/
 	String SmartFarmMeasure::id_builder(String boardID, int tempPos1, int tempPos2, int tempPos3)
 	{
@@ -323,17 +324,17 @@ void SmartFarmMeasure::get_temp(float* data, int numtempsens, int tempPos1, int 
 		{
 			results += (" ST456 ");
 		}
-		return results;		
+		return results;
 	}
 
 
 
 
 
-/** build_data_string... 
-   * Builds a data string. 
+/** build_data_string...
+   * Builds a data string.
    * The format looks like this "27.00 27.00 27.00" or "NA NA NA" or a combination
-   * inputs: 
+   * inputs:
    *    data: (float*) pointer to temperature float data
    *    numtempsens: (int) number of temperature sensors
    *    results: (String) node and sensor identifier
@@ -371,23 +372,23 @@ String SmartFarmMeasure::build_data_string(float* data, int numtempsens, String 
 
 // This returns the temp sensor data as a string
 //new for v6.1 and v6.2, east and west sensors
-/** readTemps... 
+/** readTemps...
    * Constructs a ID string for Temperature sensor and node identification over network.
    * The format looks like this "N3 ST123 "
-   * inputs: 
+   * inputs:
    *    boardID: (String) identifies which node in a network
-   *    tempPos1: (int) identifying value for sensor 1 (0-127 valid sensors, -1 for Null) 
-   *    tempPos2: (int) identifying value for sensor 2 (0-127 valid sensors, -1 for Null) 
-   *    tempPos3: (int) identifying value for sensor 3 (0-127 valid sensors, -1 for Null) 
+   *    tempPos1: (int) identifying value for sensor 1 (0-127 valid sensors, -1 for Null)
+   *    tempPos2: (int) identifying value for sensor 2 (0-127 valid sensors, -1 for Null)
+   *    tempPos3: (int) identifying value for sensor 3 (0-127 valid sensors, -1 for Null)
    * return:
-   *     String: formated node and sensor ID 
+   *     String: formated node and sensor ID
    **/
 String SmartFarmMeasure::readTemps(String boardID, int tempPos1, int tempPos2, int tempPos3)
 {
   int numtempsens = 3;
   float data[numtempsens];
   String results;
-  
+
   get_temp(data, numtempsens, tempPos1, tempPos2, tempPos3);
   results = id_builder(boardID, tempPos1, tempPos2, tempPos3);
   return build_data_string(data, numtempsens, results);
@@ -991,11 +992,11 @@ void SmartFarmMeasure::selectMuxPin(byte pin) {
 /**
    * readWM
    * Reads in watermark data from watermark sensors.
-   * inputs: 
+   * inputs:
    *    boardID: (String) identifies which node in a network
    *    WMpos1: (int) identifying value for sensor 1
-   *    WMpos2: (int) identifying value for sensor 2 
-   *    WMpos3: (int) identifying value for sensor 3  
+   *    WMpos2: (int) identifying value for sensor 2
+   *    WMpos3: (int) identifying value for sensor 3
    * return:
    *     String: formated node, data header and sensor data
    **/
@@ -1003,17 +1004,9 @@ String SmartFarmMeasure::readWM(String boardID, int WMpos1, int WMpos2, int WMpo
   byte WC = 0B00000000; //watermark connection check
   int WMPin1 = WMEvenPin;
   int WMPin2 = WMOddPin;
-  String WMdata = boardID;
+  String WMdata = boardID + " Watermark:123456";
 
-  if (WMpos1 == 1 && WMpos2 == 2 && WMpos3 == 3)
-  {
-    WMdata += F(" SM123"); //data header
-  }
-  if (WMpos1 == 4 && WMpos2 == 5 && WMpos3 == 6)
-  {
-    WMdata += F(" SM456");
-  }
-  for (byte i = 0; i <= 2; i++) // Go through ports 1,2,3 to read data
+  for (byte i = 0; i < 6; i++) // Go through ports 1-6 to read data
   {
     String Rstring = "";
     float RArray[5];
