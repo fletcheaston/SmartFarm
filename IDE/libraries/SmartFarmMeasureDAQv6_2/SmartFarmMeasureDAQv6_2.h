@@ -62,7 +62,6 @@ class SmartFarmMeasure {
 		//void readDecSensors(String boardID);// read decagon sensors
 		String readDecSensors(); // read decagon sensors
 		//void printUpload(String boardID);
-		String printUpload(String boardID);	//prints "Upload" for WebIDE uploadiong on next wakeup; changed to NPROG begin/end
 	private:
 		//DS18B20 temperature
 		void get_temp(float* data, int numtempsens, int tempPos1, int tempPos2, int tempPos3); //used for temp sensors

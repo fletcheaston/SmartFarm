@@ -41,15 +41,18 @@
 //updated library to make functions return strings to save them here and first serial print, then write to sd card.
 
 SmartFarmMeasure smf;
-String BoardID = "N7";
-String Volts = "";
-String Watermark = "";
-String Temperature = "";
-String Decagon = "";
-int Watermark_Count = 6;
-int Temperature_Count = 2;
 
-void setup() {
+void setup() 
+{
+  String BoardID = "N7";
+  String Volts = "";
+  String TimeStamp = "";
+  String Watermark = "";
+  String Temperature = "";
+  String Decagon = "";
+  int Watermark_Count = 6;
+  int Temperature_Count = 2;
+  
   smf.finishUp();
   Serial.begin(57600);
 
@@ -60,20 +63,22 @@ void setup() {
   //smf.setRTCToComputerTime(__DATE__, __TIME__);
 
   //battery read functions
-  Volts = BoardID + " " + smf.timeStamp() + " " + smf.readVolts();
+  TimeStamp = smf.timeStamp();
+  delay(1000);
+  Volts = BoardID + " " + TimeStamp + " " + smf.readVolts();
   delay(1000);
 
   //sensor setup functions...
   smf.setupAll();
   delay(2000);
 
-  Watermark = BoardID + " " + smf.timeStamp() + " " + smf.readWM(Watermark_Count);
+  Watermark = BoardID + " " + TimeStamp + " " + smf.readWM(Watermark_Count);
   delay(1000);
   
-  Temperature = BoardID + " " + smf.timeStamp() + " " + smf.readTemps(Temperature_Count);
+  Temperature = BoardID + " " + TimeStamp + " " + smf.readTemps(Temperature_Count);
   delay(1000);
   
-  Decagon = BoardID + " " + smf.timeStamp() + " " + smf.readDecSensors();
+  Decagon = smf.readDecSensors();
   delay(1000);
 
   //print serial data section

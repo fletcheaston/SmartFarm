@@ -66,15 +66,6 @@ static byte addressRegister[8] = {
 
 const int chipSelect = 10; //sdcard
 
-String SmartFarmMeasure::printUpload(String boardID) {
-  String txt = boardID;
-  txt += F(" NPROG Upload ");
-  //Serial.println(txt);
-  return txt;
-}
-
-
-
 // Convert normal decimal numbers to binary coded decimal
 byte SmartFarmMeasure::decToBcd(byte val)
 {
@@ -85,8 +76,6 @@ byte SmartFarmMeasure::bcdToDec(byte val)
 {
   return ( (val / 16 * 10) + (val % 16) );
 }
-
-
 
 void SmartFarmMeasure::setDS3231time(byte second, byte minute, byte hour, byte dayOfWeek, byte dayOfMonth, byte month, byte year) {
   // sets time and date data to DS3231
@@ -361,16 +350,16 @@ String SmartFarmMeasure::readTemps(int count)
 
 	if(count <= 0)
 	{
-		results = "No Temperatures";
+		results = F("No Temperatures");
 		return results;
 	}
 	else if(count == 1)
 	{
-		results = "Temperature:";
+		results = F("Temperature:");
 	}
 	else
 	{
-		results = "Temperatures:";
+		results = F("Temperatures:");
 	}
 
 	sensors.requestTemperatures(); // Send the command to get temperatures, gets senors ready for measurement
@@ -843,21 +832,19 @@ String SmartFarmMeasure::readWM(int count)
 	int WMPin1 = WMEvenPin;
 	int WMPin2 = WMOddPin;
 	String WMdata;
-	int min;
-	int max = 0;
 
 	if(count <= 0)
 	{
-		WMdata = "No Watermarks";
+		WMdata = F("No Watermarks");
 		return WMdata;
 	}
 	else if(count == 1)
 	{
-		WMdata = "Watermark:";
+		WMdata = F("Watermark:");
 	}
 	else
 	{
-		WMdata = "Watermarks:";
+		WMdata = F("Watermarks:");
 	}
 
 	for (byte i = 0; i < count; i++) // Go through ports 1-6 to read data
@@ -897,22 +884,19 @@ String SmartFarmMeasure::readWM(int count)
     		}
 
 		// sort the resistance array and calculate the average
-
-		min = RArray[0];
-
-    		for (int k = 0; k < 5; k++)
+    		for (int k = 0; k < 4; k++)
 		{
-			if(RArray[k] > max)
+			for (int o = 0; o < (5 - (k + 1)); o++)
 			{
-				max = RArray[k];
-			}
-			if(RArray[k] < min)
-			{
-				min = RArray[k];
+				if (RArray[o] > RArray[o + 1])
+				{
+					float temp = RArray[o];
+					RArray[o] = RArray[o + 1];
+					RArray[o + 1] = temp;
+				}
 			}
 		}
-
-		Rs = (RArray[0] + RArray[1] + RArray[2] + RArray[3] + RArray[5] - min - max) / 3;
+		Rs = (RArray[1] + RArray[2] + RArray[3]) / 3;
 
 		if (Rs > 0.0)
 		{
@@ -936,9 +920,6 @@ String SmartFarmMeasure::readWM(int count)
 
   	return WMdata;
 }
-
-
-
 
 void SmartFarmMeasure::delayMilliseconds(int x)
 {
