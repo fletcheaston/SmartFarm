@@ -42,11 +42,12 @@
 
 SmartFarmMeasure smf;
 String BoardID = "N7";
-String Timestamp = "";
 String Volts = "";
 String Watermark = "";
 String Temperature = "";
 String Decagon = "";
+int Watermark_Count = 6;
+int Temperature_Count = 2;
 
 void setup() {
   smf.finishUp();
@@ -56,56 +57,49 @@ void setup() {
   //uncomment the next line to set RTC time from compiling
   //when the battery fails this will show the default date and have to be reset
 
- //smf.setRTCToComputerTime(__DATE__, __TIME__);
+  //smf.setRTCToComputerTime(__DATE__, __TIME__);
 
-  //time and battery read functions
-  Timestamp = smf.timeStamp(BoardID);
+  //battery read functions
+  Volts = BoardID + " " + smf.timeStamp() + " " + smf.readVolts();
   delay(1000);
-  Volts = smf.readVolts(BoardID);
-  delay(1000);
-
 
   //sensor setup functions...
   smf.setupAll();
   delay(1000);
 
-  //read functions...
-  Watermark = smf.readWM(BoardID);
+  Serial.println(smf.readWM(Watermark_Count));
+  Serial.println(smf.timeStamp() + " " + smf.readWM(Watermark_Count));
+  Watermark = BoardID + " " + smf.timeStamp() + " " + smf.readWM(Watermark_Count);
   delay(1000);
-  Temperature = smf.readTemps(BoardID);
+  
+  Temperature = BoardID + " " + smf.timeStamp() + " " + smf.readTemps(Temperature_Count);
   delay(1000);
-  Decagon = smf.readDecSensors(BoardID);
+  
+  Decagon = BoardID + " " + smf.timeStamp() + " " + smf.readDecSensors();
   delay(1000);
-
+  
   //print serial data section
-  Serial.println(BoardID + " Upload ");// prints board ID and wireless programming upload on next wake
-  delay(1000);
-  Serial.println(Timestamp);// prints real-time clock data to serial port
-  delay(1000);
   Serial.println(Volts);//prints voltage
-  delay(1000);
   Serial.println(Watermark);//prints Watermark
-  delay(1000);
   Serial.println(Temperature);//prints Temperature
-  delay(1000);
   Serial.println(Decagon);//prints Decagon
-  delay(1000);
   Serial.flush();
   Serial.end();
 
-  //wait a little bit after serial printing
+  //wait a little bit after serial printings
   delay(2000);
 
   //sd write section
   smf.setupSD();
-  smf.write2SD(Timestamp);// writes real-time clock data to sd card
   smf.write2SD(Volts);//writes Voltage
   smf.write2SD(Watermark);//writes Watermark
   smf.write2SD(Temperature);//writes Temperature
   smf.write2SD(Decagon);//writes Decagon
   smf.write2SD("newline");
+  
 }
 
-void loop() {
-  // put your main code here, to run repeatedly:
+void loop()
+{
+  // Nothing to loop through
 }

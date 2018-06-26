@@ -31,9 +31,9 @@ class SmartFarmMeasure {
 		byte bcdToDec(byte val);//used by RTC
 		byte decToBcd(byte val);//used by RTC
 		void setRTCToComputerTime(char myDATEString[], char myTIMEString[]); //sets RTC to pc time on upload
-		String timeStamp(String boardID);//read time and pass as a string
+		String timeStamp();//read time and pass as a string
 		//battery and solar voltage
-		String readVolts(String boardID);//read voltages and pass as a string
+		String readVolts();//read voltages and pass as a string
 		//SD Card
 		void setupSD();//setup SD card slot
 		void write2SD(String dataString);//write to sd card
@@ -53,17 +53,16 @@ class SmartFarmMeasure {
 		//*******sensor read functions*******
 		void runAll(String boardID);// reads all sensors
 		//watermark
-		String readWM(String boardID);//read wm per position and pass as a string
+		String readWM(int count);//read wm per position and pass as a string
 		//DS18B20 temperature
 		//void readTemps(String boardID);
 		//String readTemps(String boardID);
-		String readTemps(String boardID);
+		String readTemps(int count);
 		//Decagon
 		//void readDecSensors(String boardID);// read decagon sensors
-		String readDecSensors(String boardID); // read decagon sensors
+		String readDecSensors(); // read decagon sensors
 		//void printUpload(String boardID);
 		String printUpload(String boardID);	//prints "Upload" for WebIDE uploadiong on next wakeup; changed to NPROG begin/end
-
 	private:
 		//DS18B20 temperature
 		void get_temp(float* data, int numtempsens, int tempPos1, int tempPos2, int tempPos3); //used for temp sensors
