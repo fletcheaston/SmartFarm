@@ -843,6 +843,8 @@ String SmartFarmMeasure::readWM(int count)
 	int WMPin1 = WMEvenPin;
 	int WMPin2 = WMOddPin;
 	String WMdata;
+	int min;
+	int max = 0;
 
 	if(count <= 0)
 	{
@@ -895,19 +897,22 @@ String SmartFarmMeasure::readWM(int count)
     		}
 
 		// sort the resistance array and calculate the average
-    		for (int k = 0; k < 4; k++)
+
+		min = RArray[0];
+
+    		for (int k = 0; k < 5; k++)
 		{
-			for (int o = 0; o < (5 - (k + 1)); o++)
+			if(RArray[k] > max)
 			{
-				if (RArray[o] > RArray[o + 1])
-				{
-					float temp = RArray[o];
-					RArray[o] = RArray[o + 1];
-					RArray[o + 1] = temp;
-				}
+				max = RArray[k];
+			}
+			if(RArray[k] < min)
+			{
+				min = RArray[k];
 			}
 		}
-		Rs = (RArray[1] + RArray[2] + RArray[3]) / 3;
+
+		Rs = (RArray[0] + RArray[1] + RArray[2] + RArray[3] + RArray[5] - min - max) / 3;
 
 		if (Rs > 0.0)
 		{

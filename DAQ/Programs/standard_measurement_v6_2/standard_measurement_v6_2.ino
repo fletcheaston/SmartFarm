@@ -65,10 +65,8 @@ void setup() {
 
   //sensor setup functions...
   smf.setupAll();
-  delay(1000);
+  delay(2000);
 
-  Serial.println(smf.readWM(Watermark_Count));
-  Serial.println(smf.timeStamp() + " " + smf.readWM(Watermark_Count));
   Watermark = BoardID + " " + smf.timeStamp() + " " + smf.readWM(Watermark_Count);
   delay(1000);
   
@@ -77,7 +75,7 @@ void setup() {
   
   Decagon = BoardID + " " + smf.timeStamp() + " " + smf.readDecSensors();
   delay(1000);
-  
+
   //print serial data section
   Serial.println(Volts);//prints voltage
   Serial.println(Watermark);//prints Watermark
