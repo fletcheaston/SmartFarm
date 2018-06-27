@@ -45,11 +45,6 @@ SmartFarmMeasure smf;
 void setup() 
 {
   String BoardID = "N7";
-  String Volts = "";
-  String TimeStamp = "";
-  String Watermark = "";
-  String Temperature = "";
-  String Decagon = "";
   int Watermark_Count = 6;
   int Temperature_Count = 2;
   
@@ -62,30 +57,15 @@ void setup()
 
   //smf.setRTCToComputerTime(__DATE__, __TIME__);
 
-  //battery read functions
-  TimeStamp = smf.timeStamp();
-  delay(1000);
-  Volts = BoardID + " " + TimeStamp + " " + smf.readVolts();
-  delay(1000);
-
   //sensor setup functions...
   smf.setupAll();
   delay(2000);
 
-  Watermark = BoardID + " " + TimeStamp + " " + smf.readWM(Watermark_Count);
-  delay(1000);
-  
-  Temperature = BoardID + " " + TimeStamp + " " + smf.readTemps(Temperature_Count);
-  delay(1000);
-  
-  Decagon = smf.readDecSensors();
-  delay(1000);
-
   //print serial data section
-  Serial.println(Volts);//prints voltage
-  Serial.println(Watermark);//prints Watermark
-  Serial.println(Temperature);//prints Temperature
-  Serial.println(Decagon);//prints Decagon
+  Serial.println(BoardID + " " + smf.timeStamp() + " " + smf.readVolts());//prints voltage
+  Serial.println(BoardID + " " + smf.timeStamp() + " " + smf.readWM(Watermark_Count));//prints Watermarks
+  Serial.println(BoardID + " " + smf.timeStamp() + " " + smf.readTemps(Temperature_Count));//prints temps
+  Serial.println(BoardID + " " + smf.timeStamp() + " " + smf.readDecSensors());//prints decagon
   Serial.flush();
   Serial.end();
 
@@ -94,10 +74,10 @@ void setup()
 
   //sd write section
   smf.setupSD();
-  smf.write2SD(Volts);//writes Voltage
-  smf.write2SD(Watermark);//writes Watermark
-  smf.write2SD(Temperature);//writes Temperature
-  smf.write2SD(Decagon);//writes Decagon
+  smf.write2SD(BoardID + " " + smf.timeStamp() + " " + smf.readVolts());//writes Voltage
+  smf.write2SD(BoardID + " " + smf.timeStamp() + " " + smf.readWM(Watermark_Count));//writes Watermark
+  smf.write2SD(BoardID + " " + smf.timeStamp() + " " + smf.readTemps(Temperature_Count));//writes Temperature
+  smf.write2SD(BoardID + " " + smf.timeStamp() + " " + smf.readDecSensors());//writes Decagon
   smf.write2SD("newline");
   
 }
