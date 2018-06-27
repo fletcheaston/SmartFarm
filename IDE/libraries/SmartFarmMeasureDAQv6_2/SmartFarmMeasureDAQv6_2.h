@@ -43,42 +43,14 @@ class SmartFarmMeasure {
 		void setupAll();//sets up all sensors
 		//watermark
 		void setupWM();//setup watermark sensors
-		void test2_setupWM();//setup wm, Same as v6.2 setupWM?
-		//DS18B20 temperature
 		void setupTemps();//setup temperature sensors
-		//Decagon
-		//void setupDecSensors();//setup dec sensors
-		String setupDecSensors(String boardID); //setup dec sensors
 
 		//*******sensor read functions*******
-		void runAll(String boardID);// reads all sensors
-		//watermark
-		String readWM(int count);//read wm per position and pass as a string
-		//DS18B20 temperature
-		//void readTemps(String boardID);
-		//String readTemps(String boardID);
+		String readWM(int count);
 		String readTemps(int count);
-		//Decagon
-		//void readDecSensors(String boardID);// read decagon sensors
-		String readDecSensors(); // read decagon sensors
-		//void printUpload(String boardID);
+
 	private:
-		//DS18B20 temperature
 		void get_temp(float* data, int numtempsens, int tempPos1, int tempPos2, int tempPos3); //used for temp sensors
-		String getDevAddress(DeviceAddress deviceAddress);//used for temp sensors
-		//void printData(DeviceAddress deviceAddress);
-		//String printData(DeviceAddress deviceAddress);
-		//Decagon
-		//void takeDecMeasurement(char i);
-		String takeDecMeasurement(char i); //decagon measurements
-		//void printBufferToScreen(char i);
-		boolean checkActive(char i);//checks decagon activity
-		boolean setTaken(byte i);//places decagon in addressRegister
-		boolean setVacant(byte i);//sets vacant in addressRegister
-		boolean isTaken(byte i);// checks addressRegister for active sensor
-		char printInfo(char i);// identification information from a sensor
-		byte charToDec(char i);//converts allowable address characters to 0-61
-		char decToChar(byte i);//maps 0-61 to allowable address characters
 		void delayMilliseconds(int x);//keeps time
 };
 
