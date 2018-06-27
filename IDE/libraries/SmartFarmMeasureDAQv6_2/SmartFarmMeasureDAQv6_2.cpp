@@ -28,7 +28,8 @@ N3 NPROG end //Node Reprogram command
 
 //Defined pins
 //#define XBEE_RADIO_BAUD 57600 not sure how to call this defined constant variable in the ino file from this library. So I placed it insinde the ino file for now.
-#define Coms2MCU 6 //used in finishUp function and communicating back to the mcu. Can use an FSM on this pin in the mcu firmware to communicate different stages in the DAQ during the measurement cycle, like when the measurement is done, the DAQ could wiggle or indicate that it is done and also when to enter program mode as well as if a program is ready.
+#define Coms2MCU 6 //used in finishUp function and communicating back to the mcu. Can use an FSM on this pin in the mcu firmware...
+//to communicate different stages in the DAQ during the measurement cycle, like when the measurement is done, the DAQ could wiggle or indicate that it is done and also when to enter program mode as well as if a program is ready.
 //As in, RPi or base station can tell the DAQ board "Hey I've got a new program for you, Finish the measurement data then I'll send it over to you". The DAQ would respond with "ok, here's measurement data, I'm going into programming mode".
 //In this way the wireless programming mode could be shutoff and only available when the base station requests it. That's if the DAQ can receive requests, which it should be able to.
 #define WMEvenPin 4 //used in setupWM function
@@ -65,40 +66,30 @@ static byte addressRegister[8] = {
 
 const int chipSelect = 10; //sdcard
 
-String SmartFarmMeasure::printUpload(String boardID) {
-  String txt = boardID;
-  txt += F(" NPROG Upload ");
-  //Serial.println(txt);
-  return txt;
-}
-
-
-
 // Convert normal decimal numbers to binary coded decimal
 byte SmartFarmMeasure::decToBcd(byte val)
 {
-  return ( (val / 10 * 16) + (val % 10) );
+	return ( (val / 10 * 16) + (val % 10) );
 }
 // Convert binary coded decimal to normal decimal numbers
 byte SmartFarmMeasure::bcdToDec(byte val)
 {
-  return ( (val / 16 * 10) + (val % 16) );
+	return ( (val / 16 * 10) + (val % 16) );
 }
 
-
-
-void SmartFarmMeasure::setDS3231time(byte second, byte minute, byte hour, byte dayOfWeek, byte dayOfMonth, byte month, byte year) {
-  // sets time and date data to DS3231
-  Wire.beginTransmission(DS3231_I2C_ADDRESS);
-  Wire.write(0); // set next input to start at the seconds register
-  Wire.write(decToBcd(second)); // set seconds
-  Wire.write(decToBcd(minute)); // set minutes
-  Wire.write(decToBcd(hour)); // set hours
-  Wire.write(decToBcd(dayOfWeek)); // set day of week (1=Sunday, 7=Saturday)
-  Wire.write(decToBcd(dayOfMonth)); // set date (1 to 31)
-  Wire.write(decToBcd(month)); // set month
-  Wire.write(decToBcd(year)); // set year (0 to 99)
-  Wire.endTransmission();
+void SmartFarmMeasure::setDS3231time(byte second, byte minute, byte hour, byte dayOfWeek, byte dayOfMonth, byte month, byte year)
+{
+	// sets time and date data to DS3231
+	Wire.beginTransmission(DS3231_I2C_ADDRESS);
+	Wire.write(0); // set next input to start at the seconds register
+	Wire.write(decToBcd(second)); // set seconds
+	Wire.write(decToBcd(minute)); // set minutes
+	Wire.write(decToBcd(hour)); // set hours
+	Wire.write(decToBcd(dayOfWeek)); // set day of week (1=Sunday, 7=Saturday)
+	Wire.write(decToBcd(dayOfMonth)); // set date (1 to 31)
+	Wire.write(decToBcd(month)); // set month
+	Wire.write(decToBcd(year)); // set year (0 to 99)
+	Wire.endTransmission();
 }
 
 
@@ -111,18 +102,18 @@ void SmartFarmMeasure::readDS3231time(byte *second,//RTC function
                                       byte *month,
                                       byte *year)
 {
-  Wire.beginTransmission(DS3231_I2C_ADDRESS);
-  Wire.write(0); // set DS3231 register pointer to 00h
-  Wire.endTransmission();
-  Wire.requestFrom(DS3231_I2C_ADDRESS, 7);
-  // request seven bytes of data from DS3231 starting from register 00h
-  *second = bcdToDec(Wire.read() & 0x7f);
-  *minute = bcdToDec(Wire.read());
-  *hour = bcdToDec(Wire.read() & 0x3f);
-  *dayOfWeek = bcdToDec(Wire.read());
-  *dayOfMonth = bcdToDec(Wire.read());
-  *month = bcdToDec(Wire.read());
-  *year = bcdToDec(Wire.read());
+	Wire.beginTransmission(DS3231_I2C_ADDRESS);
+	Wire.write(0); // set DS3231 register pointer to 00h
+	Wire.endTransmission();
+	Wire.requestFrom(DS3231_I2C_ADDRESS, 7);
+	// request seven bytes of data from DS3231 starting from register 00h
+	*second = bcdToDec(Wire.read() & 0x7f);
+	*minute = bcdToDec(Wire.read());
+	*hour = bcdToDec(Wire.read() & 0x3f);
+	*dayOfWeek = bcdToDec(Wire.read());
+	*dayOfMonth = bcdToDec(Wire.read());
+	*month = bcdToDec(Wire.read());
+	*year = bcdToDec(Wire.read());
 }
 
 
@@ -130,150 +121,136 @@ void SmartFarmMeasure::readDS3231time(byte *second,//RTC function
 //this function sets the RTC time from the compile time
 void SmartFarmMeasure::setRTCToComputerTime(char myDATEString[], char myTIMEString[])
 {
-  byte s, MIN, h, dW, d, m, y;
-  s = atoi(&myTIMEString[6]);
-  //Serial.println(s);
-  MIN = atoi(&myTIMEString[3]);
-  //Serial.println(MIN);
-  h = atoi(&myTIMEString[0]);
-  //Serial.println(h);
-  dW = 0; // don't care about the day of week
-  d = atoi(&myDATEString[4]);
-  //Serial.println(d);
-  // Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec
-  switch (myDATEString[0]) {
-    //condition date[1] == 'a' is true, return 1, elseif m = date[2] == 'n' ? 6 : 7;
-    case 'J': m = myDATEString[1] == 'a' ? 1 : m = myDATEString[2] == 'n' ? 6 : 7; break;
-    case 'F': m = 2; break;
-    //ternary statement    if date[2] == 'r' TRUE then return 4, else return 8
-    case 'A': m = myDATEString[2] == 'r' ? 4 : 8; break;
-    case 'M': m = myDATEString[2] == 'r' ? 3 : 5; break;
-    case 'S': m = 9; break;
-    case 'O': m = 10; break;
-    case 'N': m = 11; break;
-    case 'D': m = 12; break;
-  }
-  //Serial.println(m);
-  y = atoi(&myDATEString[9]);
-  //Serial.println(y);
-  setDS3231time(s, MIN, h, dW, d, m, y);
-}
-
-
-
-
-String SmartFarmMeasure::readVolts(String boardID) //Battery & Solar voltage reporting
-{
-  analogReference(EXTERNAL); // use AREF for reference voltage added 1/5/17
-  String Text = boardID;
-  Text += F(" VOLTS ");
-  int BatVi = analogRead(readBatpin); //A6 Battery Voltage Pin
-  int SolVi = analogRead(readSolpin); //A7 Solar Voltage pin
-  float BatVF = (BatVi * 2.0 * 3.3) / 1023.0; //battery voltage the 2.0 and 3600 should be measured, though each board will vary slightly
-  float SolVF = (SolVi * 2.0 * 3.3) / 1023.0; //solar voltage
-  Text += String(BatVF, 2);
-  Text += ' ' + String(SolVF, 2) + ' ';
-  return Text;
-}
-
-
-
-
-String SmartFarmMeasure::timeStamp(String boardID) //RTC function
-{
-  byte second, minute, hour, dayOfWeek, dayOfMonth, month, year;
-  String M = ""; String D = ""; String Y = ""; String HR = ""; String MIN = ""; String S = ""; //strings for RTC
-  String Text = boardID;
-  Text += F(" NTIME ");
-  // retrieve data from DS3231
-  readDS3231time(&second, &minute, &hour, &dayOfWeek, &dayOfMonth, &month,
-                 &year);
-  // send it to the serial monitor
-  M = String(month, DEC);
-  D = String(dayOfMonth, DEC);
-  Y = String(year, DEC);
-  HR = String(hour, DEC);
-  if (minute < 10)
-  {
-    MIN += '0';
-  }
-  MIN += String(minute, DEC);
-  if (second < 10)
-  {
-    S += '0';
-  }
-  S += String(second, DEC);
-  Text += Y + '-' + M + '-' + D + '-' + HR + ':' + MIN + ':' + S + ' '; //Desired Format 2017-12-01-16:34:23 which is //Y-M-D-HR:MIN:S
-  //Text += ' ' + M + D + Y + '_' + HR + ':' + MIN+ ':' + S + ' '; //Displays MDY_HR:MIN
-  delay(1000);
-  return Text;
-}
-
-
-
-
-void SmartFarmMeasure::setupAll() {
-  Serial.begin(57600);
-  setupSD();
-  delay(1000);
-  setupWM();
-  delay(1000);
-  setupTemps();
-  delay(1000);
-  setupDecSensors("");
-  delay(1000);
-}
-
-
-
-
-void SmartFarmMeasure::runAll(String boardID) {
-  //readWM(boardID);
-  delay(1000);
-  //readTemps(boardID);
-  delay(1000);
-  readDecSensors(boardID);
-  delay(1000);
-  printUpload(boardID);
-  Serial.flush();
-  finishUp();
-  return;
-}
-
-
-
-
-void SmartFarmMeasure::setupSD() {
-  SD.begin(chipSelect);
-}
-
-
-
-
-void SmartFarmMeasure::write2SD(String dataString) {
-  File dataFile = SD.open("datalog.txt", FILE_WRITE);
-  if (dataFile) // if the file is available, write to it:
-    if (dataString == "newline")
-    { dataFile.println();
-      dataFile.close();
-      //Serial.println("***SD Card written.***\n");
-    }
-	else
+	byte s, MIN, h, dW, d, m, y;
+	s = atoi(&myTIMEString[6]);
+	//Serial.println(s);
+	MIN = atoi(&myTIMEString[3]);
+	//Serial.println(MIN);
+	h = atoi(&myTIMEString[0]);
+	//Serial.println(h);
+	dW = 0; // don't care about the day of week
+	d = atoi(&myDATEString[4]);
+	//Serial.println(d);
+	// Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec
+	switch (myDATEString[0])
 	{
-      dataFile.print(dataString);
-      dataFile.close();
-      //Serial.println("***SD Card written.***\n");
-    }
-  else // if the file isn't open, pop up an error:
-  {
-    //Serial.println("XXXSD Card not found.XXX\n");
-  }
-  dataString = "";
-  delay(1200);
+		//condition date[1] == 'a' is true, return 1, elseif m = date[2] == 'n' ? 6 : 7;
+		case 'J': m = myDATEString[1] == 'a' ? 1 : m = myDATEString[2] == 'n' ? 6 : 7; break;
+		case 'F': m = 2; break;
+		//ternary statement    if date[2] == 'r' TRUE then return 4, else return 8
+		case 'A': m = myDATEString[2] == 'r' ? 4 : 8; break;
+		case 'M': m = myDATEString[2] == 'r' ? 3 : 5; break;
+		case 'S': m = 9; break;
+		case 'O': m = 10; break;
+		case 'N': m = 11; break;
+		case 'D': m = 12; break;
+	}
+	//Serial.println(m);
+	y = atoi(&myDATEString[9]);
+	//Serial.println(y);
+	setDS3231time(s, MIN, h, dW, d, m, y);
 }
 
+String SmartFarmMeasure::readVolts() //Battery & Solar voltage reporting
+{
+	analogReference(EXTERNAL); // use AREF for reference voltage added 1/5/17
+	String Text = "";
+	int BatVi = analogRead(readBatpin); //A6 Battery Voltage Pin
+	int SolVi = analogRead(readSolpin); //A7 Solar Voltage pin
+	float BatVF = (BatVi * 2.0 * 3.3) / 1023.0; //battery voltage the 2.0 and 3600 should be measured, though each board will vary slightly
+	float SolVF = (SolVi * 2.0 * 3.3) / 1023.0; //solar voltage
+	Text += "Battery Voltage: " + String(BatVF, 2);
+	Text += " Solar Voltage: " + String(SolVF, 2);
+	return Text;
+}
 
+String SmartFarmMeasure::timeStamp() //RTC function
+{
+	byte second, minute, hour, dayOfWeek, dayOfMonth, month, year;
+	String M = ""; String D = ""; String Y = ""; String HR = ""; String MIN = ""; String S = ""; //strings for RTC
+	String result;
 
+	// retrieve data from DS3231
+	readDS3231time(&second, &minute, &hour, &dayOfWeek, &dayOfMonth, &month,
+	         &year);
+	// send it to the serial monitor
+	M = String(month, DEC);
+	D = String(dayOfMonth, DEC);
+	Y = String(year, DEC);
+	HR = String(hour, DEC);
+
+	if (minute < 10)
+	{
+		MIN += '0';
+	}
+
+	MIN += String(minute, DEC);
+
+	if (second < 10)
+	{
+		S += '0';
+	}
+
+	S += String(second, DEC);
+	result = Y + "/" + M + "/" + D + "/" + HR + ":" + MIN + ":" + S;
+	//result += Y + '-' + M + '-' + D + '-' + HR + ':' + MIN + ':' + S + ' '; //Desired Format
+	return result;
+}
+
+void SmartFarmMeasure::setupAll()
+{
+	Serial.begin(57600);
+	setupSD();
+	delay(1000);
+	setupWM();
+	delay(1000);
+	setupTemps();
+	delay(1000);
+	setupDecSensors("");
+	delay(1000);
+}
+
+void SmartFarmMeasure::runAll(String boardID)
+{
+	//readWM(boardID);
+	delay(1000);
+	//readTemps(boardID);
+	delay(1000);
+	readDecSensors();
+	delay(1000);
+	Serial.flush();
+	finishUp();
+	return;
+}
+
+void SmartFarmMeasure::setupSD()
+{
+	SD.begin(chipSelect);
+}
+
+void SmartFarmMeasure::write2SD(String dataString)
+{
+	File dataFile = SD.open("datalog.txt", FILE_WRITE);
+	if (dataFile) // if the file is available, write to it:
+		if (dataString == "newline")
+		{
+			dataFile.println();
+			dataFile.close();
+			//Serial.println("***SD Card written.***\n");
+		}
+		else
+		{
+			dataFile.print(dataString);
+			dataFile.close();
+			//Serial.println("***SD Card written.***\n");
+		}
+	else // if the file isn't open, pop up an error:
+	{
+		//Serial.println("Error: SD Card not found")
+	}
+	dataString = "";
+	delay(1200);
+}
 
   /** get_temp
    * Stores temperature data.
@@ -284,52 +261,22 @@ void SmartFarmMeasure::write2SD(String dataString) {
    *    tempPos2: (int) identifying value for sensor 2 (0-127 valid sensors, -1 for Null)
    *    tempPos3: (int) identifying value for sensor 3 (0-127 valid sensors, -1 for Null)
    **/
+
 void SmartFarmMeasure::get_temp(float* data, int numtempsens, int tempPos1, int tempPos2, int tempPos3)
 {
-  sensors.requestTemperatures(); // Send the command to get temperatures, gets senors ready for measurement
-  // call sensors.requestTemperatures() to issue a global temperature
-  // request to all devices on the bus
-  int tempPosition[] = {tempPos1 - 1, tempPos2 - 1, tempPos3 - 1};
-  uint8_t *address;
-  // Loop through each device, store temperature data
-  for (int i = 0; i < numtempsens; i++)
-  {
-    //copy each storedaddress into a temporary device address type
-    address  = storedAddress[tempPosition[i]];
-    data[i] = sensors.getTempC(address);
-  }
-}
-
-
-
-/** id_builder
-   * Constructs an ID string for Temperature sensor and node identification in the network
-   * The format looks like this "N3 ST123 "
-   * inputs:
-   *    boardID: (String) identifies which node in a network
-   *    tempPos1: (int) identifying value for sensor 1 (0-127 valid sensors, -1 for Null)
-   *    tempPos2: (int) identifying value for sensor 2 (0-127 valid sensors, -1 for Null)
-   *    tempPos3: (int) identifying value for sensor 3 (0-127 valid sensors, -1 for Null)
-   * return:
-   *     String: formated node and sensor ID
-   **/
-	String SmartFarmMeasure::id_builder(String boardID, int tempPos1, int tempPos2, int tempPos3)
+	sensors.requestTemperatures(); // Send the command to get temperatures, gets senors ready for measurement
+	// call sensors.requestTemperatures() to issue a global temperature
+	// request to all devices on the bus
+	int tempPosition[] = {tempPos1 - 1, tempPos2 - 1, tempPos3 - 1};
+	uint8_t *address;
+	// Loop through each device, store temperature data
+	for (int i = 0; i < numtempsens; i++)
 	{
-		String results = boardID;
-		if (tempPos1 == 1 && tempPos2 == 2 && tempPos3 == 3)
-		{
-			 results += F(" ST123 ");
-		}
-		else if (tempPos1 == 4 && tempPos2 == 5 && tempPos3 == 6)
-		{
-			results += (" ST456 ");
-		}
-		return results;
+		//copy each storedaddress into a temporary device address type
+		address  = storedAddress[tempPosition[i]];
+		data[i] = sensors.getTempC(address);
 	}
-
-
-
-
+}
 
 /** build_data_string...
    * Builds a data string.
@@ -340,7 +287,7 @@ void SmartFarmMeasure::get_temp(float* data, int numtempsens, int tempPos1, int 
    *    results: (String) node and sensor identifier
    * return:
    *     String: complete string of data and/or placeholders
-   **/
+   *
 String SmartFarmMeasure::build_data_string(float* data, int numtempsens, String results)
 {
   String NA = F("NA");
@@ -366,7 +313,7 @@ String SmartFarmMeasure::build_data_string(float* data, int numtempsens, String 
     results += ' ';
   }
   return results;
-}
+}*/
 
 
 
@@ -383,66 +330,46 @@ String SmartFarmMeasure::build_data_string(float* data, int numtempsens, String 
    * return:
    *     String: formated node and sensor ID
    **/
-String SmartFarmMeasure::readTemps(String boardID, int tempPos1, int tempPos2, int tempPos3)
-{
-  int numtempsens = 3;
-  float data[numtempsens];
-  String results;
 
-  get_temp(data, numtempsens, tempPos1, tempPos2, tempPos3);
-  results = id_builder(boardID, tempPos1, tempPos2, tempPos3);
-  return build_data_string(data, numtempsens, results);
+String SmartFarmMeasure::readTemps(int count)
+{
+	String results;
+	uint8_t *address;
+	char fbuff[8];
+	float data;
+
+	if(count <= 0)
+	{
+		results = F("No Temperatures");
+		return results;
+	}
+	else if(count == 1)
+	{
+		results = F("Temperature:");
+	}
+	else
+	{
+		results = F("Temperatures:");
+	}
+
+	sensors.requestTemperatures(); // Send the command to get temperatures, gets senors ready for measurement
+	int tempPosition[] = {0,1};
+
+	for (int i = 0;i < count;i++)
+	{
+		address  = storedAddress[tempPosition[i]];
+		data = sensors.getTempC(address);
+		dtostrf(data, 5, 2, fbuff);
+		results += " ";
+		results += fbuff;
+	}
+
+	return results;
 }
 
-
-
-/*
-  // This is before returning the temp sensor as a string
-  void SmartFarmMeasure::readTemps(String boardID) {
-  String NA = "NA";
-  String results = " ";
-  results += boardID + " ";
-  int i = 0;
-  int placeholder = MAX_SENSORS - numsens; // 4-count, expected value = 4-4,4-3,4-2,4-1,4-0 = 0,1,2,3,4 NAs to print
-  sensors.requestTemperatures();
-  // print the device information
-  for (i = 0; i < numsens; i++) { //sensors exist
-    // results += printData(therms[i]);
-    printData(therms[i]);
-  }
-  for (i = 0; i < placeholder; i++) {
-    results += NA + ' '; //should print NA NA NA NA if no sensors found. should print NA NA NA
-  }
-  Serial.print(results);
-  write2SD(results);
-  }
-
-  void SmartFarmMeasure::printData(DeviceAddress deviceAddress)
-  {
-  String result = "";
-  float tempC;
-  // float tempF;
-  // NOTE 8/12/17: Discovered that the float value hogs a lot of space when writing to the sd card, and so never really writes to it effectively.
-  // results += getDevAddress(deviceAddress);
-  // results += " ";
-  tempC = sensors.getTempC(deviceAddress);
-  // results += "Temp C: ";
-  //result = String(tempC, 2) + ' ';
-  result = "B2 55.60 55.78 54.20 54.23";
-
-  /*   results += " Temp F: ";
-    tempF = DallasTemperature::toFahrenheit(tempC);
-    results += String(tempF);
-  Serial.print(result);
-  write2SD(result);
-  }
-*/
-
-
-
-
 //setup temps should address the sensors, sort them and store them in an array to access in read temps west and east functions
-void SmartFarmMeasure::setupTemps() {
+void SmartFarmMeasure::setupTemps()
+{
   //this function: counts devices, checks parasite power mode, calls the store address function, sets the precision, & sorts the devices
   //Test algorithm with sleep
   //Test algorithm with power off/lose power (unplug battery and plug back in)
@@ -560,7 +487,8 @@ String SmartFarmMeasure::getDevAddress(DeviceAddress deviceAddress)
 
 
 
-String SmartFarmMeasure::setupDecSensors(String boardID) {
+String SmartFarmMeasure::setupDecSensors(String boardID)
+{
   String Text = boardID +F(" DMECT");
   smartSDI12.begin();
   delay(500); // allow things to settle
@@ -594,45 +522,49 @@ String SmartFarmMeasure::setupDecSensors(String boardID) {
 
 
 
-String SmartFarmMeasure::readDecSensors(String boardID) {
-  String result = boardID +F(" DMECT");
-  // result ="Reading Decagon 5TE Sensors... \n";
-  // result += "VWC(Dielectric) EC(dS/m) Temperature(Deg C)\n";
+String SmartFarmMeasure::readDecSensors()
+{
+	String result = F("Decagon:");
+	// result ="Reading Decagon 5TE Sensors... \n";
+	// result += "VWC(Dielectric) EC(dS/m) Temperature(Deg C)\n";
 
-  for (char i = '0'; i <= '9'; i++) if (isTaken(i)) {
+	for (char i = '0'; i <= '9'; i++) if (isTaken(i))
+	{
 
-      //printInfo(i);        //Prints "#13DECAGON 5TE   365." which is "Sensor ID, Type, and Version."
-      result += takeDecMeasurement(i);        //This prints " 1.01 0.00 24.7"
-      smartSDI12.flush();
-      //Serial.print(result);
+		//printInfo(i);
+		//Prints "#13DECAGON 5TE   365." which is "Sensor ID, Type, and Version."
+		result += takeDecMeasurement(i);//This prints " 1.01 0.00 24.7"
+		smartSDI12.flush();
+		//Serial.print(result);
+	}
 
-    }
+	// scan address space a-z
+	for (char i = 'a'; i <= 'z'; i++) if (isTaken(i))
+	{
+		// result += " D" + String(i); //should be the id of the dec sensor  printing "# "
+		// write2SD(result); //write
+		// Serial.print(result); //print
+		// result = "";
+		//printInfo(i);        //Prints "#13DECAGON 5TE   365." which is "Sensor ID, Type, and Version."
+		result += takeDecMeasurement(i);        //This prints " 1.01 0.00 24.7"
+		smartSDI12.flush();
+		//Serial.print(result);
+	}
 
-  // scan address space a-z
-  for (char i = 'a'; i <= 'z'; i++) if (isTaken(i)) {
-      // result += " D" + String(i); //should be the id of the dec sensor  printing "# "
-      // write2SD(result); //write
-      // Serial.print(result); //print
-      // result = "";
-      //printInfo(i);        //Prints "#13DECAGON 5TE   365." which is "Sensor ID, Type, and Version."
-      result += takeDecMeasurement(i);        //This prints " 1.01 0.00 24.7"
-      smartSDI12.flush();
-      //Serial.print(result);
-    }
+	// scan address space A-Z
+	for (char i = 'A'; i <= 'Z'; i++) if (isTaken(i))
+	{
+		// result += " D" + String(i); //should be the id of the dec sensor  printing "# "
+		// write2SD(result); //write
+		// Serial.print(result); //print
+		// result = "";
+		//printInfo(i);        //Prints "#13DECAGON 5TE   365." which is "Sensor ID, Type, and Version."
+		result += takeDecMeasurement(i);        //This prints " 1.01 0.00 24.7"
+		smartSDI12.flush();
+		// Serial.print(result);
+	}
 
-  // scan address space A-Z
-  for (char i = 'A'; i <= 'Z'; i++) if (isTaken(i)) {
-      // result += " D" + String(i); //should be the id of the dec sensor  printing "# "
-      // write2SD(result); //write
-      // Serial.print(result); //print
-      // result = "";
-      //printInfo(i);        //Prints "#13DECAGON 5TE   365." which is "Sensor ID, Type, and Version."
-      result += takeDecMeasurement(i);        //This prints " 1.01 0.00 24.7"
-      smartSDI12.flush();
-      // Serial.print(result);
-    }
-
-  return result;
+	return result;
 }
 
 
@@ -721,13 +653,14 @@ boolean SmartFarmMeasure::checkActive(char i) {
 
 // this sets the bit in the proper location within the addressRegister
 // to record that the sensor is active and the address is taken.
-boolean SmartFarmMeasure::setTaken(byte i) {
-  boolean initStatus = isTaken(i);
-  i = charToDec(i); // e.g. convert '0' to 0, 'a' to 10, 'Z' to 61.
-  byte j = i / 8;   // byte #
-  byte k = i % 8;   // bit #
-  addressRegister[j] |= (1 << k);
-  return !initStatus; // return false if already taken
+boolean SmartFarmMeasure::setTaken(byte i)
+{
+	boolean initStatus = isTaken(i);
+	i = charToDec(i); // e.g. convert '0' to 0, 'a' to 10, 'Z' to 61.
+	byte j = i / 8;   // byte #
+	byte k = i % 8;   // bit #
+	addressRegister[j] |= (1 << k);
+	return !initStatus; // return false if already taken
 }
 
 
@@ -736,28 +669,30 @@ boolean SmartFarmMeasure::setTaken(byte i) {
 // THIS METHOD IS UNUSED IN THIS EXAMPLE, BUT IT MAY BE HELPFUL.
 // this unsets the bit in the proper location within the addressRegister
 // to record that the sensor is active and the address is taken.
-boolean SmartFarmMeasure::setVacant(byte i) {
-  boolean initStatus = isTaken(i);
-  i = charToDec(i); // e.g. convert '0' to 0, 'a' to 10, 'Z' to 61.
-  byte j = i / 8;   // byte #
-  byte k = i % 8;   // bit #
-  addressRegister[j] &= ~(1 << k);
-  return initStatus; // return false if already vacant
+boolean SmartFarmMeasure::setVacant(byte i)
+{
+	boolean initStatus = isTaken(i);
+	i = charToDec(i); // e.g. convert '0' to 0, 'a' to 10, 'Z' to 61.
+	byte j = i / 8;   // byte #
+	byte k = i % 8;   // bit #
+	addressRegister[j] &= ~(1 << k);
+	return initStatus; // return false if already vacant
 }
 
 
 
 
 // this quickly checks if the address has already been taken by an active sensor
-boolean SmartFarmMeasure::isTaken(byte i) {
-  //Serial.write(i);
-  //Serial.println();
-  i = charToDec(i); // e.g. convert '0' to 0, 'a' to 10, 'Z' to 61.
-  //Serial.write(i);
-  //Serial.println();
-  byte j = i / 8;   // byte #
-  byte k = i % 8;   // bit #
-  return addressRegister[j] & (1 << k); // return bit status
+boolean SmartFarmMeasure::isTaken(byte i)
+{
+	//Serial.write(i);
+	//Serial.println();
+	i = charToDec(i); // e.g. convert '0' to 0, 'a' to 10, 'Z' to 61.
+	//Serial.write(i);
+	//Serial.println();
+	byte j = i / 8;   // byte #
+	byte k = i % 8;   // bit #
+	return addressRegister[j] & (1 << k); // return bit status
 }
 
 
@@ -797,10 +732,11 @@ char SmartFarmMeasure::printInfo(char i) {
 
 // converts allowable address characters '0'-'9', 'a'-'z', 'A'-'Z',
 // to a decimal number between 0 and 61 (inclusive) to cover the 62 possible addresses
-byte SmartFarmMeasure::charToDec(char i) {
-  if ((i >= '0') && (i <= '9')) return i - '0'; //returns i as a byte
-  if ((i >= 'a') && (i <= 'z')) return i - 'a' + 10; //decimal 35
-  if ((i >= 'A') && (i <= 'Z')) return i - 'A' + 36; //changed from 37, 11/30/17 as this gave i as 62 instead of 61
+byte SmartFarmMeasure::charToDec(char i)
+{
+	if ((i >= '0') && (i <= '9')) return i - '0'; //returns i as a byte
+	if ((i >= 'a') && (i <= 'z')) return i - 'a' + 10; //decimal 35
+	if ((i >= 'A') && (i <= 'Z')) return i - 'A' + 36; //changed from 37, 11/30/17 as this gave i as 62 instead of 61
 }
 
 
@@ -809,67 +745,65 @@ byte SmartFarmMeasure::charToDec(char i) {
 // THIS METHOD IS UNUSED IN THIS EXAMPLE, BUT IT MAY BE HELPFUL.
 // maps a decimal number between 0 and 61 (inclusive) to
 // allowable address characters '0'-'9', 'a'-'z', 'A'-'Z',
-char SmartFarmMeasure::decToChar(byte i) {
-  if ((i >= 0) && (i <= 9)) return i + '0';
-  if ((i >= 10) && (i <= 36)) return i + 'a' - 10;
-  if ((i >= 37) && (i <= 62)) return i + 'A' - 37;
+char SmartFarmMeasure::decToChar(byte i)
+{
+	if ((i >= 0) && (i <= 9)) return i + '0';
+	if ((i >= 10) && (i <= 36)) return i + 'a' - 10;
+	if ((i >= 37) && (i <= 62)) return i + 'A' - 37;
 }
-
-
-
 
 /** setupWM
    * Sets up resistive port for watermark sensors.
    **/
-void SmartFarmMeasure::setupWM() {
-  //Set up the power port
-  pinMode(WMEvenPin, OUTPUT);
-  pinMode(WMOddPin, OUTPUT);
-  //Set up the select pins as outputs
-  for (int i = 0; i < 3; i++) {
-    pinMode(selectPins[i], OUTPUT);
-    digitalWrite(selectPins[i], LOW); //initialize to first mux pin Y0, the first WM pin
-    delayMilliseconds(5);
-  }
+void SmartFarmMeasure::setupWM()
+{
+	//Set up the power port
+	pinMode(WMEvenPin, OUTPUT);
+	pinMode(WMOddPin, OUTPUT);
+	//Set up the select pins as outputs
+	for (int i = 0; i < 3; i++)
+	{
+		pinMode(selectPins[i], OUTPUT);
+		digitalWrite(selectPins[i], LOW); //initialize to first mux pin Y0, the first WM pin
+		delayMilliseconds(5);
+	}
 }
 
-
-
-
-void SmartFarmMeasure::test2_setupWM() {
-  //Set up the power port
-  pinMode(WMEvenPin, OUTPUT);
-  pinMode(WMOddPin, OUTPUT);
-  analogReference(EXTERNAL); // use AREF for reference voltage used for test2_readWM function
+void SmartFarmMeasure::test2_setupWM()
+{
+	//Set up the power port
+	pinMode(WMEvenPin, OUTPUT);
+	pinMode(WMOddPin, OUTPUT);
+	analogReference(EXTERNAL); // use AREF for reference voltage used for test2_readWM function
 }
-
-
-
 
 //call this function at the beginning of the DAQ program to finish wireless uploading
-void SmartFarmMeasure::finishUp() {
-  pinMode(Coms2MCU, OUTPUT);
-  digitalWrite(Coms2MCU, LOW);
-  delay(80);
-  digitalWrite(Coms2MCU, HIGH);
-  delay(80);
-  digitalWrite(Coms2MCU, LOW);
-  pinMode(Coms2MCU, INPUT);
+void SmartFarmMeasure::finishUp()
+{
+	pinMode(Coms2MCU, OUTPUT);
+	digitalWrite(Coms2MCU, LOW);
+	delay(80);
+	digitalWrite(Coms2MCU, HIGH);
+	delay(80);
+	digitalWrite(Coms2MCU, LOW);
+	pinMode(Coms2MCU, INPUT);
 }
 
-
-
-
 // The selectMuxPin function sets the S0, S1, and S2 pins to select the given pin
-void SmartFarmMeasure::selectMuxPin(byte pin) {
-  for (int i = 0; i < 3; i++)
-  {
-    delayMilliseconds(5);
-    if (pin & (1 << i))
-      digitalWrite(selectPins[i], HIGH);
-    else
-      digitalWrite(selectPins[i], LOW);
-  }
+void SmartFarmMeasure::selectMuxPin(byte pin)
+{
+	for (int i = 0; i < 3; i++)
+	{
+		delayMilliseconds(5);
+		if (pin & (1 << i))
+		{
+			digitalWrite(selectPins[i], HIGH);
+		}
+		else
+		{
+			digitalWrite(selectPins[i], LOW);
+		}
+	}
 }
 
 
@@ -886,84 +820,105 @@ void SmartFarmMeasure::selectMuxPin(byte pin) {
    * return:
    *     String: formated node, data header and sensor data
    **/
-String SmartFarmMeasure::readWM(String boardID) {
-  byte WC = 0B00000000; //watermark connection check
-  int WMPin1 = WMEvenPin;
-  int WMPin2 = WMOddPin;
-  String WMdata = boardID + " Watermark:123456";
+String SmartFarmMeasure::readWM(int count)
+{
+	byte WC = 0B00000000; //watermark connection check
+	int WMPin1 = WMEvenPin;
+	int WMPin2 = WMOddPin;
+	String WMdata;
 
-  for (byte i = 0; i < 6; i++) // Go through ports 1-6 to read data
-  {
-    String Rstring = "";
-    float RArray[5];
-    float Rs;
-    float R; //sensor resistance
-    float v; //volt measurements
-    selectMuxPin(i);
-    //take measurements 5 times
-    for (int j = 0; j < 5; j++) {
-      digitalWrite(WMPin1, LOW); // sets the pin on
-      digitalWrite(WMPin2, HIGH); // sets the pin off
-      delayMilliseconds(5); // 100 Hz*/
+	if(count <= 0)
+	{
+		WMdata = F("No Watermarks");
+		return WMdata;
+	}
+	else if(count == 1)
+	{
+		WMdata = F("Watermark:");
+	}
+	else
+	{
+		WMdata = F("Watermarks:");
+	}
 
-      digitalWrite(WMPin1, HIGH); // sets the pin on
-      digitalWrite(WMPin2, LOW); // sets the pin off
-      delayMilliseconds(5); // 100 Hz
-      int a = analogRead(muxAnalogRead);//
+	for (byte i = 0; i < count; i++) // Go through ports 1-6 to read data
+	{
+		String Rstring = " ";
+		float RArray[5];
+		float Rs;
+		float R; //sensor resistance
+		float v; //volt measurements
+		selectMuxPin(i);
+		//take measurements 5 times
+		for (int j = 0; j < 5; j++)
+		{
+			digitalWrite(WMPin1, LOW); // sets the pin on
+			digitalWrite(WMPin2, HIGH); // sets the pin off
+			delayMilliseconds(5); // 100 Hz*/
 
-      digitalWrite(WMPin1, LOW); // Shut down the watermark power
-      digitalWrite(WMPin2, LOW);
+			digitalWrite(WMPin1, HIGH); // sets the pin on
+			digitalWrite(WMPin2, LOW); // sets the pin off
+			delayMilliseconds(5); // 100 Hz
+			int a = analogRead(muxAnalogRead);//
 
-      //////// do the math after the watermark is powered off
-      v = 3.3 * a / 1023.0; //take another reading
-      R = 10000.0 * v / (3.3 - v); //voltage divider rule to find resistance value
-      if (R > 0.0)  //watermark200ss sensors should range between...
-      {
-        RArray[j] = R;
-      }
-      else {
-        RArray[j] = -1;
-      }
-    }
+			digitalWrite(WMPin1, LOW); // Shut down the watermark power
+			digitalWrite(WMPin2, LOW);
 
-    // sort the resistance array and calculate the average
-    for (int k = 0; k < 4; k++) {
-      for (int o = 0; o < (5 - (k + 1)); o++) {
-        if (RArray[o] > RArray[o + 1]) {
-          float temp = RArray[o];
-          RArray[o] = RArray[o + 1];
-          RArray[o + 1] = temp;
-        }
-      }
-    }
-    Rs = (RArray[1] + RArray[2] + RArray[3]) / 3;
+			//////// do the math after the watermark is powered off
+			v = 3.3 * a / 1023.0; //take another reading
+			R = 10000.0 * v / (3.3 - v); //voltage divider rule to find resistance value
+			if (R > 0.0)  //watermark200ss sensors should range between...
+      			{
+        			RArray[j] = R;
+      			}
+      			else
+			{
+        			RArray[j] = -1;
+      			}
+    		}
 
-    Rs = R;
-    if (Rs > 0.0) {
-      Rstring = String(Rs, 3);
-    }
-    else
-    {
-      Rstring = F("NA");
-    }
-    WMdata = WMdata + ' ' + Rstring; // resistor reading for sensor i
+		// sort the resistance array and calculate the average
+    		for (int k = 0; k < 4; k++)
+		{
+			for (int o = 0; o < (5 - (k + 1)); o++)
+			{
+				if (RArray[o] > RArray[o + 1])
+				{
+					float temp = RArray[o];
+					RArray[o] = RArray[o + 1];
+					RArray[o + 1] = temp;
+				}
+			}
+		}
+		Rs = (RArray[1] + RArray[2] + RArray[3]) / 3;
 
-  }//finish each port*/
-  for (int i = 0; i < 3; i++) {
-    pinMode(selectPins[i], OUTPUT);
-    digitalWrite(selectPins[i], LOW);
-    delayMilliseconds(5);
-  }
-  WMdata += ' ';
-  return WMdata;
+		if (Rs > 0.0)
+		{
+			Rstring = String(Rs);
+		}
+		else
+		{
+			Rstring = F("NA");
+		}
+		WMdata = WMdata + ' ' + Rstring; // resistor reading for sensor i
+
+	}
+
+	//finish each port
+	for (int i = 0; i < 3; i++)
+	{
+		pinMode(selectPins[i], OUTPUT);
+		digitalWrite(selectPins[i], LOW);
+		delayMilliseconds(5);
+  	}
+
+  	return WMdata;
 }
 
-
-
-
-void SmartFarmMeasure::delayMilliseconds(int x) {
-  for (int i = 0; i < x; i++)
-  {
-    delayMicroseconds(1000);// 1 millsec
-  }
+void SmartFarmMeasure::delayMilliseconds(int x)
+{
+	for (int i = 0; i < x; i++)
+	{
+		delayMicroseconds(1000);// 1 millsec
+	}
 }
