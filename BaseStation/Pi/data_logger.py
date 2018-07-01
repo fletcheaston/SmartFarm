@@ -27,6 +27,7 @@ def log_action(string):
 		with open(action_log, "a") as file:
 			line = current_timestamp() + " | " + string + "\n";
 			file.write(line);
+			print(line);
 
 	except:
 		print("Error writing data ({!r}) to action log. Fix immediately.".format(string));
