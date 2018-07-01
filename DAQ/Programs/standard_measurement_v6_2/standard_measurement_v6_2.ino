@@ -44,12 +44,11 @@ SmartFarmMeasure smf;
 
 void setup() 
 {
-  String BoardID = "N7";
+  String BoardID = "F1";
   int Watermark_Count = 6;
   int Temperature_Count = 2;
-  String Volts;
-  String Temperature;
-  String Watermark;
+  String data;
+  String decagon;
   
   smf.finishUp();
   Serial.begin(57600);
@@ -63,28 +62,23 @@ void setup()
   //sensor setup functions...
   smf.setupAll();
 
-  //read sensor data
-  Volts = BoardID + " " + smf.timeStamp() + " " + smf.readVolts();
-  Watermark = BoardID + " " + smf.timeStamp() + " " + smf.readWM(Watermark_Count);
-  Temperature = BoardID + " " + smf.timeStamp() + " " + smf.readTemps(Temperature_Count);
+  data = smf.readVolts() + " " + smf.readWM(Watermark_Count) + " " + smf.readTemps(Temperature_Count); 
+  decagon = smf.readDecSensors();
   
   //print serial data section
-  Serial.println(Volts);//prints voltage
-  Serial.println(Watermark);//prints Watermarks
-  Serial.println(Temperature);//prints temps
+  Serial.println(BoardID + " " + data);//prints all data
+  Serial.println(BoardID + " " + decagon);
   Serial.flush();
   Serial.end();
-
   //wait a little bit after serial printings
   delay(2000);
 
   //sd write section
   smf.setupSD();
-  smf.write2SD(Volts);//writes Voltage
-  smf.write2SD(Watermark);//writes Watermark
-  smf.write2SD(Temperature);//writes Temperature
+  smf.write2SD(BoardID + " " + smf.timeStamp() + " " + data);//writes all data to SD
+  smf.write2SD(BoardID + " " + smf.timeStamp() + " " + decagon);
   smf.write2SD("newline");
-  
+
 }
 
 void loop()

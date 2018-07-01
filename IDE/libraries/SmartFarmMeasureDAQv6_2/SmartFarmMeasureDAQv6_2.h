@@ -7,51 +7,55 @@
 #include <DallasTemperature.h>
 #include <SD.h>
 #include <SPI.h>
-#include <Wire.h> //Decagon Sensor Library
-#include <SDI12.h> //Decagon Sensor Library
+#include <Wire.h>
+#include <SDI12.h>
 #include <Arduino.h>
 
 
 class SmartFarmMeasure {
 	public:
-		//SmartFarmMeasure();
-		//*******Node functions*******
-		void finishUp(); //wireless programming completed indicator to MCU from DAQ
-
-		//*******Node hardware setup functions*******
-		//RTC
-		void setDS3231time(byte second, byte minute, byte hour, byte dayOfWeek, byte dayOfMonth, byte month, byte year);
-		void readDS3231time(byte *second,//read rtc
+		SmartFarmMeasure();
+		void finishUp();
+		void setupTemps();
+		//void readTemps(String boardID);
+		//String readTemps(String boardID);
+		String readTemps(int count);
+		void setupSD();
+		void write2SD(String dataString);
+		void setupDecSensors();
+		String readDecSensors();
+		void setupWM();
+		String readWM(int count);
+		void selectMuxPin(byte pin);
+		void setupAll();
+		String timeStamp();
+		String readVolts();
+		void readDS3231time(byte *second,
                     byte *minute,
                     byte *hour,
                     byte *dayOfWeek,
                     byte *dayOfMonth,
                     byte *month,
                     byte *year);
-		byte bcdToDec(byte val);//used by RTC
-		byte decToBcd(byte val);//used by RTC
-		void setRTCToComputerTime(char myDATEString[], char myTIMEString[]); //sets RTC to pc time on upload
-		String timeStamp();//read time and pass as a string
-		//battery and solar voltage
-		String readVolts();//read voltages and pass as a string
-		//SD Card
-		void setupSD();//setup SD card slot
-		void write2SD(String dataString);//write to sd card
-		//analog mux circuit
-		void selectMuxPin(byte pin); //selsets the mux pin to read
-		//*******sensor setup functions*******
-		void setupAll();//sets up all sensors
-		//watermark
-		void setupWM();//setup watermark sensors
-		void setupTemps();//setup temperature sensors
-
-		//*******sensor read functions*******
-		String readWM(int count);
-		String readTemps(int count);
-
+		void setDS3231time(byte second, byte minute, byte hour, byte dayOfWeek, byte dayOfMonth, byte month, byte year);
+		byte bcdToDec(byte val);
+		byte decToBcd(byte val);
+		void setRTCToComputerTime(char myDATEString[], char myTIMEString[]);
 	private:
-		void get_temp(float* data, int numtempsens, int tempPos1, int tempPos2, int tempPos3); //used for temp sensors
-		void delayMilliseconds(int x);//keeps time
+		String getDevAddress(DeviceAddress deviceAddress);
+		//void printData(DeviceAddress deviceAddress);
+		//String printData(DeviceAddress deviceAddress);
+		//void takeDecMeasurement(char i);
+		String takeDecMeasurement(char i);
+		void printBufferToScreen(char i);
+		boolean checkActive(char i);
+		boolean setTaken(byte i);
+		boolean setVacant(byte i);
+		boolean isTaken(byte i);
+		char printInfo(char i);
+		byte charToDec(char i);
+		char decToChar(byte i);
+		void delayMilliseconds(int x);
 };
 
 #endif
