@@ -1,6 +1,5 @@
 #Created by Fletcher Easton
 
-#import fresnode;
 import data_logger;
 
 import serial;
@@ -28,10 +27,13 @@ def main():
 
 	while(True):
 
-		while(reader.in_waiting):
-			serial_string = reader.readline().decode().strip();
+		try:
+			while(reader.in_waiting):
+				serial_string = reader.readline().decode().strip();
 
-			data_logger.log_action("Read string from serial.");
-			data_logger.log_raw_data(serial_string);
+				data_logger.log_action("Read string from serial.");
+				data_logger.log_raw_data(serial_string);
 
+		except:
+			data_logger.log_action("An error has occured.");
 main();
