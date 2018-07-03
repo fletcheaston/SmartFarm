@@ -11,7 +11,7 @@ raw_data_log = "/var/log/smarfarm/SmartFarmData.log";
 # Used to record each action of the scripts. Contains all data from the log_action(string) function.
 # Actions that should be logged include "reading serial data", "parsing serial data", errors, etc.
 action_log = "action_log.txt";
-previous_action_log = "previous_action_log.txt";
+action_log_archive = "action_log_archive.txt";
 
 # Defines the maximum size of the action log, in bytes. This is arbitrarily set to prevent the system from filling up with action logs.
 # Some basic math time! A full set of readings on a single node (version 6.2, deployment Fx) measures, at most, 200 bytes in size. We've got eight of these nodes, and two nodes from the Bx deployment. Each node from the Bx deployment gives a full set of readings that measure, at most, 218 bytes. A full set of readings from all boards measures 2,036 bytes, at most. Readings are taken approximately every ten minutes, which gives 144 sets of readings every day. In total, every day accounts for 293,184 bytes of data written to the action log, at most.
@@ -63,19 +63,26 @@ def log_action(string):
 			file.write(line);
 			print(line);
 
-		if(os.path.getsize(action_log) > max_log_size):
-			reset_action_log();
-			log_action("Archiving and resetting the action log.");
+		# Checks if the action log is too large. If so, the log is archived and erased.
+		check_for_log_reset();
 
 	except:
 		print("Error writing data ({!r}) to action log. Fix immediately.".format(string));
+
+# Checks if the action log is too large. If so, the log is archived and erased.
+def check_for_log_reset():
+	if(os.path.getsize(action_log) > max_log_size):
+		reset_action_log();
+		log_action("Archiving and resetting the action log.");
 
 # Archives the current action log and erases it's contents.
 # Currently, approximately two weeks of actions are logged and archived. After this, the log is erased. Two weeks should be plenty of time to determine if something has gone wrong with the serial reader and/or data logger scripts.
 def reset_action_log():
 	source_file = open(action_log, "r");
-	target_file = open(previous_action_log, "w");
+	target_file = open(action_log_archive, "w");
 
+	# Copies the contents of the source file into the target file, and closes both files.
 	shutil.copyfileobj(source_file, target_file);
 
-	erased_action_log = open(action_log, "w").close();
+	# Reopens the action log in write mode, and immediately closes it. This erases the action log.
+	open(action_log, "w").close();
