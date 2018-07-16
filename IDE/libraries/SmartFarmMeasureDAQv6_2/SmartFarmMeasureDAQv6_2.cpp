@@ -629,6 +629,13 @@ String SmartFarmMeasure::readWM(int count)
 
 	for (byte i = 0; i < count; i++) // Go through ports 1 to count to read data
 	{
+<<<<<<< HEAD
+=======
+/*                 if(i == 5)
+                {
+                        i = 6;
+                } */
+>>>>>>> 5663beb6516a4a63e8bd1ac4a64f08028fa56aef
 		String Rstring = "";
 		float RArray[5];
 		float Rs;
