@@ -5,6 +5,7 @@
 //INCLUDED MUX FOR WATERMARK PROGRAM 12/29/17
 
 //BY: Caleb Fink
+//Updated by Fletcher Easton
 
 //Defined pins
 #define Coms2MCU 6 //used in finishUp function and communicating back to the mcu. Can use an FSM on this pin in the mcu firmware to communicate different stages in the DAQ during the measurement cycle, like when the measurement is done, the DAQ could wiggle or indicate that it is done and also when to enter program mode as well as if a program is ready.
