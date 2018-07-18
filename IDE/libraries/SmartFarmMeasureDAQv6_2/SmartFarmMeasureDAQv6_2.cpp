@@ -150,7 +150,6 @@ boolean SmartFarmMeasure::checkActive(char i)
 	return false;
 }
 
-
 // this sets the bit in the proper location within the addressRegister
 // to record that the sensor is active and the address is taken.
 boolean SmartFarmMeasure::setTaken(byte i)
@@ -175,7 +174,6 @@ boolean SmartFarmMeasure::setVacant(byte i)
 	addressRegister[j] &= ~(1 << k);
 	return initStatus; // return false if already vacant
 }
-
 
 // this quickly checks if the address has already been taken by an active sensor
 boolean SmartFarmMeasure::isTaken(byte i)
@@ -258,59 +256,69 @@ String SmartFarmMeasure::getDevAddress(DeviceAddress deviceAddress)
 
 String SmartFarmMeasure::takeDecMeasurement(char i)
 {
-  String command = "";
-  //String result = "";
-  command += i; //address of sensor from for loop above
-  command += "M!"; // SDI-12 measurement command format  [address]['M'][!]
-  smartSDI12.sendCommand(command);
-  while (!smartSDI12.available() > 5); // wait for acknowlegement with format [address][ttt (3 char, seconds)][number of measurments available, 0-9]
-  delay(100);
+	String command = "";
+	//String result = "";
+	command += i; //address of sensor from for loop above
+	command += "M!"; // SDI-12 measurement command format  [address]['M'][!]
+	smartSDI12.sendCommand(command);
+	while (!smartSDI12.available() > 5); // wait for acknowlegement with format [address][ttt (3 char, seconds)][number of measurments available, 0-9]
+	delay(100);
 
-  smartSDI12.read(); //consume address
+	smartSDI12.read(); //consume address
 
-  // find out how long we have to wait (in seconds).
-  int wait = 0;
-  wait += 100 * smartSDI12.read() - '0';
-  wait += 10 * smartSDI12.read() - '0';
-  wait += 1 * smartSDI12.read() - '0';
+	// find out how long we have to wait (in seconds).
+	int wait = 0;
+	wait += 100 * smartSDI12.read() - '0';
+	wait += 10 * smartSDI12.read() - '0';
+	wait += 1 * smartSDI12.read() - '0';
 
-  smartSDI12.read(); // ignore # measurements, for this simple example
-  smartSDI12.read(); // ignore carriage return
-  smartSDI12.read(); // ignore line feed
+	smartSDI12.read(); // ignore # measurements, for this simple example
+	smartSDI12.read(); // ignore carriage return
+	smartSDI12.read(); // ignore line feed
 
-  long timerStart = millis();
-  while ((millis() - timerStart) > (1000 * wait)) {
-    if (smartSDI12.available()) break;               //sensor can interrupt us to let us know it is done early
-  }
+	long timerStart = millis();
+	while ((millis() - timerStart) > (1000 * wait))
+	{
+		if (smartSDI12.available()) break;
+		//sensor can interrupt us to let us know it is done early
+	}
 
-  // in this example we will only take the 'DO' measurement
-  smartSDI12.flush();
-  command = "";
-  command += i;
-  command += "D0!"; // SDI-12 command to get data [address][D][dataOption][!]
-  smartSDI12.sendCommand(command);
-  while (!smartSDI12.available() > 1); // wait for acknowlegement
-  delay(300); // let the data transfer
-  String buffer =  "D" + String(i); //should be the id of the dec sensor  printing "# "
-  smartSDI12.read(); // consume address
-  while (smartSDI12.available()) {
-    char c = smartSDI12.read();
-    if (c == '+' || c == '-') {
-      buffer += ' ';  // this may need to be changed back
-      if (c == '-') buffer += '-';
-    }
-    else if (c == '\r' || c == '\n') {
-      buffer += "";
-      // break;
-    }
-    else {
-      buffer += String(c);
-      //if (c == '\n') buffer += "NEWLINE CHARACTER";
-    }
-    delay(100);
-  }
-  return buffer;
+	// in this example we will only take the 'DO' measurement
+	smartSDI12.flush();
+	command = "";
+	command += i;
+	command += "D0!"; // SDI-12 command to get data [address][D][dataOption][!]
+	smartSDI12.sendCommand(command);
 
+	while (!smartSDI12.available() > 1); // wait for acknowlegement
+
+	delay(300); // let the data transfer
+
+	String buffer =  "D" + String(i); //should be the id of the dec sensor  printing "# "
+	smartSDI12.read(); // consume address
+
+	while (smartSDI12.available())
+	{
+		char c = smartSDI12.read();
+		if (c == '+' || c == '-')
+		{
+			buffer += ' ';  // this may need to be changed back
+			if (c == '-') buffer += '-';
+		}
+		else if (c == '\r' || c == '\n')
+		{
+			buffer += "";
+			// break;
+		}
+		else
+		{
+			buffer += String(c);
+			//if (c == '\n') buffer += "NEWLINE CHARACTER";
+		}
+		delay(100);
+	}
+
+	return buffer;
 }
 
 /******************************************************************************/
@@ -393,8 +401,7 @@ String SmartFarmMeasure::timeStamp() //RTC function
 	String result;
 
 	// retrieve data from DS3231
-	readDS3231time(&second, &minute, &hour, &dayOfWeek, &dayOfMonth, &month,
-	         &year);
+	readDS3231time(&second, &minute, &hour, &dayOfWeek, &dayOfMonth, &month, &year);
 	// send it to the serial monitor
 	M = String(month, DEC);
 	D = String(dayOfMonth, DEC);
@@ -415,7 +422,7 @@ String SmartFarmMeasure::timeStamp() //RTC function
 
 	S += String(second, DEC);
 	result = Y + "/" + M + "/" + D + "/" + HR + ":" + MIN + ":" + S;
-	//result += Y + '-' + M + '-' + D + '-' + HR + ':' + MIN + ':' + S + ' '; //Desired Format
+
 	return result;
 }
 
@@ -450,7 +457,6 @@ void SmartFarmMeasure::write2SD(String dataString)
 		{
 			dataFile.println();
 			dataFile.close();
-			//Serial.println("***SD Card written.***\n");
 		}
 		else
 		{
@@ -571,25 +577,8 @@ void SmartFarmMeasure::setupDecSensors()
 	smartSDI12.begin();
 	delay(500); // allow things to settle
 
-	//Serial.println("Scanning Decagon 5TE addresses.");
-
 	for (byte i = '0'; i <= '9'; i++) if (checkActive(i)) setTaken(i);  // scan address space 0-9
 
-	//THIS IS A MAJOR ERROR! It prints out Found 52 Decagon 5TE sensors! when only 1 decagon is in the terminal
-	//Not sure how to fix this! But I did narrow down to this single address, the first one that a Decagon is found.
-	//if (checkActive('0')) setTaken('0');
-	//What happens if I plug in 2 decagons? Same, 52 sensors were found. Hmm.
-	//It appears that isTaken is true for 52 times, as the found variable is 52
-	//This means that isTaken(0) to isTaken(51) it is true, so that found increases from 0 to 52
-	//What sets isTaken true? Anything other than 0. So, how is isTaken other than 0?
-	//he first time it is called is within the setTaken function @ '0'
-	//ithin the setTaken function, the addressRegister gets a true or false depending on...IDK
-	//Tried with a different board, v5.4 from UCSB, this had previou firmware and software
-
-	//Could it be the physical port D2? where its an active sensor or not
-	//The checkActive function is supposed to check if the sensor is active or not
-	//I don't believe its the port, becuase of bord v5.4
-	// needs further testing
 	for (byte i = 'a'; i <= 'z'; i++) if (checkActive(i)) setTaken(i); // scan address space a-z
 
 	for (byte i = 'A'; i <= 'Z'; i++) if (checkActive(i)) setTaken(i); // scan address space A-Z
@@ -603,18 +592,6 @@ void SmartFarmMeasure::setupDecSensors()
 			found++;
 		}
 	}
-
-	if (!found)
-	{
-		//Serial.println("No DECAGON 5TE sensors found.");
-	}
-	// stop here
-
-	String foundstr = "Found ";
-	foundstr += String(found, DEC);
-	foundstr += " Decagon 5TE sensors.";
-	//Serial.println(foundstr);
-	//Serial.println(found);
 }
 
 /******************************************************************************/
@@ -735,36 +712,22 @@ String SmartFarmMeasure::readDecSensors()
 
 	for (char i = '0'; i <= '9'; i++) if (isTaken(i))
 	{
-		//printInfo(i);        //Prints "#13DECAGON 5TE   365." which is "Sensor ID, Type, and Version."
-		result += takeDecMeasurement(i);        //This prints " 1.01 0.00 24.7"
+		result += takeDecMeasurement(i);
 		smartSDI12.flush();
-		//Serial.print(result);
 	}
 
 	// scan address space a-z
 	for (char i = 'a'; i <= 'z'; i++) if (isTaken(i))
 	{
-		// result += " D" + String(i); //should be the id of the dec sensor  printing "# "
-		// write2SD(result); //write
-		// Serial.print(result); //print
-		// result = "";
-		//printInfo(i);        //Prints "#13DECAGON 5TE   365." which is "Sensor ID, Type, and Version."
-		result += takeDecMeasurement(i);        //This prints " 1.01 0.00 24.7"
+		result += takeDecMeasurement(i);
 		smartSDI12.flush();
-		//Serial.print(result);
 	}
 
 	// scan address space A-Z
 	for (char i = 'A'; i <= 'Z'; i++) if (isTaken(i))
 	{
-		// result += " D" + String(i); //should be the id of the dec sensor  printing "# "
-		// write2SD(result); //write
-		// Serial.print(result); //print
-		// result = "";
-		//printInfo(i);        //Prints "#13DECAGON 5TE   365." which is "Sensor ID, Type, and Version."
-		result += takeDecMeasurement(i);        //This prints " 1.01 0.00 24.7"
+		result += takeDecMeasurement(i);
 		smartSDI12.flush();
-		// Serial.print(result);
 	}
 
 	return result;
