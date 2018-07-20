@@ -16,74 +16,74 @@ class SmartFarmMeasure {
 
 		// Some Low Level Functions
 
-		void finishUp()
+		void finishUp();
 
 		// RTC Functions
 
-		void setDS3231time(byte second, byte minute, byte hour, byte dayOfWeek, byte dayOfMonth, byte month, byte year)
+		void setDS3231time(byte second, byte minute, byte hour, byte dayOfWeek, byte dayOfMonth, byte month, byte year);
 
-		void readDS3231time(byte *second, byte *minute, byte *hour, byte *dayOfWeek, byte *dayOfMonth, byte *month, byte *year)
+		void readDS3231time(byte *second, byte *minute, byte *hour, byte *dayOfWeek, byte *dayOfMonth, byte *month, byte *year);
 
-		void setRTCToComputerTime(char myDATEString[], char myTIMEString[])
+		void setRTCToComputerTime(char myDATEString[], char myTIMEString[]);
 
-		String timeStamp()
+		String timeStamp();
 
 		// Voltage Functions
 
-		String readVolts()
+		String readVolts();
 
 		// SD Card Functions
 
-		void setupSD()
+		void setupSD();
 
-		void write2SD(String dataString)
+		void write2SD(String dataString);
 
 		// Setup Sensor Functions
 
-		void setupAll()
+		void setupAll();
 
-		void setupWM()
+		void setupWM();
 
-		void setupTemps()
+		void setupTemps();
 
-		void setupDecSensors()
+		void setupDecSensors();
 
 		// Read Sensor Functions
 
-		String readWM(int count)
+		String readWM(int count);
 
-		String readTemps(int count)
+		String readTemps(int count);
 
-		String readDecSensors()
+		String readDecSensors();
 
 	private:
 		// Most of the Low Level Functions
 
-		SmartFarmMeasure()
+		SmartFarmMeasure();
 
-		byte decToBcd(byte val)
+		byte decToBcd(byte val);
 
-		byte bcdToDec(byte val)
+		byte bcdToDec(byte val);
 
-		byte charToDec(char i)
+		byte charToDec(char i);
 
-		char decToChar(byte i)
+		char decToChar(byte i);
 
-		boolean checkActive(char i)
+		boolean checkActive(char i);
 
-		boolean setTaken(byte i)
+		boolean setTaken(byte i);
 
-		boolean setVacant(byte i)
+		boolean setVacant(byte i);
 
-		boolean isTaken(byte i)
+		boolean isTaken(byte i);
 
-		void selectMuxPin(byte pin)
+		void selectMuxPin(byte pin);
 
-		String getDevAddress(DeviceAddress device_address)
+		String getDevAddress(DeviceAddress device_address);
 
-		String takeDecMeasurement(char i)
+		String takeDecMeasurement(char i);
 
-		void delayMilliseconds(int x)
+		void delayMilliseconds(int x);
 
 };
 
