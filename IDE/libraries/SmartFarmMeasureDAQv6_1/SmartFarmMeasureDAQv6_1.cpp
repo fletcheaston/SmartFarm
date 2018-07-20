@@ -1,8 +1,6 @@
 #include "SmartFarmMeasureDAQv6_1.h"
-//ALTERED 11/29/17
 //Included String boardID in read functions for data parsing from network
 // End each serial print data segment with a newline for easy parsing on the Pi
-//INCLUDED MUX FOR WATERMARK PROGRAM 12/29/17
 
 //BY: Caleb Fink
 //Updated by Fletcher Easton
@@ -16,13 +14,10 @@
 #define muxAnalogRead 3 //used in setupMUXAnalog & readMUXAnalog function
 const int selectPins[3] = {9, 20, 21}; // used for Mux. Select pins to DAQ pins: S0~9, S1~20, S2~21
 #define DS3231_I2C_ADDRESS 0x68 //Defined RTC Address
-String M = ""; String D = ""; String Y = ""; String HR = ""; String MIN = ""; String S = ""; //strings for RTC
 #define ONE_WIRE_BUS 3
 #define TEMPERATURE_PRECISION 12
-#define MAX_SENSORS 6 //used in read temp per side
 OneWire oneWire(ONE_WIRE_BUS);
 DallasTemperature sensors(&oneWire);
-//DeviceAddress therms[MAX_SENSORS];
 DeviceAddress tempDeviceAddress; //used in read temps
 uint8_t storedAddress[6][8]; // used in read temps
 int numberOfDevices = 0; // Number of temperature devices found
