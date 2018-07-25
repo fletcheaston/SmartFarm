@@ -1,10 +1,10 @@
 /*
-  _____          ____            __   ___
-  |  __ \   /\   / __ \          / /  |__ \
-  | |  | | /  \ | |  | | __   __/ /_     ) |
-  | |  | |/ /\ \| |  | | \ \ / / '_ \   / /
-  | |__| / ____ \ |__| |  \ V /| (_) | / /_
-  |_____/_/    \_\___\_\   \_/  \___(_)____|
+  _____          ____            __   ____
+  |  __ \   /\   / __ \          / /  |  |
+  | |  | | /  \ | |  | | __   __/ /_  |  |
+  | |  | |/ /\ \| |  | | \ \ / / '_ \ |  |
+  | |__| / ____ \ |__| |  \ V /| (_) ||  |
+  |_____/_/    \_\___\_\   \_/  \___(_)__|
 
   updated for v6.2 2/15/18
   DAQ pinout
@@ -62,12 +62,13 @@ void setup()
   //sensor setup functions...
   smf.setupAll();
 
-  data = smf.readVolts() + " " + smf.readWM(Watermark_Count) + " " + smf.readTemps(Temperature_Count);
+  //data = smf.readVolts() + " " + smf.readWM(Watermark_Count);
   decagon = smf.readDecSensors();
 
   //print serial data section
-  Serial.println(BoardID + " " + data);//prints all data
-  Serial.println(BoardID + " " + decagon);
+  Serial.println(BoardID + " " + smf.readVolts());//prints all data
+  Serial.println(BoardID + " " + smf.readWM(Watermark_Count));
+  Serial.println(BoardID + " " + smf.readTemps(Temperature_Count));
   Serial.flush();
   Serial.end();
   //wait a little bit after serial printings
@@ -75,8 +76,8 @@ void setup()
 
   //sd write section
   smf.setupSD();
-  smf.write2SD(BoardID + " " + smf.timeStamp() + " " + data);//writes all data to SD
-  smf.write2SD(BoardID + " " + smf.timeStamp() + " " + decagon);
+  //smf.write2SD(BoardID + " " + smf.timeStamp() + " " + data);//writes all data to SD
+  //smf.write2SD(BoardID + " " + smf.timeStamp() + " " + decagon);
   smf.write2SD("newline");
 
 }
