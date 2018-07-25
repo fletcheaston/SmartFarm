@@ -59,7 +59,9 @@ class SmartFarmMeasure {
 	private:
 		// Most of the Low Level Functions
 
-		void SmartFarmMeasure();
+		char printInfo(char i);
+
+		void setupMUXAnalog();
 
 		byte decToBcd(byte val);
 

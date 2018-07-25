@@ -42,6 +42,11 @@ static byte addressRegister[8] = {
 /******************************************************************************/
 /* Utility Functions */
 
+SmartFarmMeasure::SmartFarmMeasure()
+{
+	// Does absolutely nothing but allows the script to compile?
+}
+
 //External analog mux circuit
 void SmartFarmMeasure::setupMUXAnalog()
 {
@@ -58,11 +63,6 @@ void SmartFarmMeasure::setupMUXAnalog()
 		digitalWrite(selectPins[i], LOW);
 		delayMilliseconds(5);
 	}
-}
-
-void SmartFarmMeasure::SmartFarmMeasure()
-{
-	// Does absolutely nothing but allows the script to compile?
 }
 
 // Convert normal decimal numbers to binary coded decimal
@@ -434,7 +434,7 @@ String SmartFarmMeasure::readVolts() //Battery & Solar voltage reporting
 	float BatVF = (BatVi * 2.0 * 3600) / 1000000; //battery voltage
 	float SolVF = (SolVi * 2.0 * 3600) / 1000000; //solar voltage
 	result = String(BatVF, 2) + " " + String(SolVF, 2);
-	return Text;
+	return result;
 }
 
 /******************************************************************************/
@@ -565,7 +565,7 @@ void SmartFarmMeasure::setupTemps()
 	}
 }
 
-String SmartFarmMeasure::setupDecSensors()
+void SmartFarmMeasure::setupDecSensors()
 {
 	smartSDI12.begin();
 	delay(500); // allow things to settle
@@ -594,8 +594,8 @@ String SmartFarmMeasure::setupDecSensors()
 String SmartFarmMeasure::readWM(int count)
 {
 	byte WC = 0B00000000; //watermark connection check
-	int WMPin1 = WMEvenPin;
-	int WMPin2 = WMOddPin;
+	int WMPin1 = muxWMdigitalEven;
+	int WMPin2 = muxWMdigitalOdd;
 	String result;
 
 	for (byte i = 0; i < count; i++) // Go through ports 1 to count to read data
@@ -679,25 +679,26 @@ String SmartFarmMeasure::readWM(int count)
 
 String SmartFarmMeasure::readTemps(int count)
 {
-	String result;
-	uint8_t *address;
-	char fbuff[8];
-	float data;
+        String result = "";
+        int tempPosition[] = {0,1,2,3,4,5,6,7,8,9};
+        uint8_t temp[8];
+        sensors.requestTemperatures();
+        for (int i = 0; i <= count; i++)
+        {
+                for (int y = 0; y < 8; y++)
+                {
+                        temp[y] = storedAddress[tempPosition[i]][y];
+                }
 
-	sensors.requestTemperatures(); // Send the command to get temperatures, gets senors ready for measurement
-	int tempPosition[] = {0,1,2,3,4,5,6,7,8,9};
-	// If you're reading more than 10 temperature sensors... don't...
+                float tempC;
+                char fbuff[8];
+                tempC = sensors.getTempC(temp);
+                dtostrf(tempC, 5, 2, fbuff);
 
-	for (int i = 0;i < count;i++)
-	{
-		address  = storedAddress[tempPosition[i]];
-		data = sensors.getTempC(address);
-		dtostrf(data, 5, 2, fbuff);
-		result += fbuff;
-		result += " ";
-	}
-
-	return result;
+                result += fbuff;
+                result += ' ';
+        }
+        return result;
 }
 
 String SmartFarmMeasure::readDecSensors()
