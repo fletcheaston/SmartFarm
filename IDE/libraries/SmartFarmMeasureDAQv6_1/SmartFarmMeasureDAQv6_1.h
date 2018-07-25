@@ -59,7 +59,7 @@ class SmartFarmMeasure {
 	private:
 		// Most of the Low Level Functions
 
-		SmartFarmMeasure();
+		void SmartFarmMeasure();
 
 		byte decToBcd(byte val);
 

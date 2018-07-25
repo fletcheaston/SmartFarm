@@ -60,7 +60,7 @@ void SmartFarmMeasure::setupMUXAnalog()
 	}
 }
 
-SmartFarmMeasure::SmartFarmMeasure()
+void SmartFarmMeasure::SmartFarmMeasure()
 {
 	// Does absolutely nothing but allows the script to compile?
 }
