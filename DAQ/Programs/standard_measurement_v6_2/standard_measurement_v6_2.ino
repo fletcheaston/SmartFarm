@@ -1,5 +1,5 @@
 /*
-  _____          ____            __   ___
+  Yeah _____          ____            __   ___
   |  __ \   /\   / __ \          / /  |__ \
   | |  | | /  \ | |  | | __   __/ /_     ) |
   | |  | |/ /\ \| |  | | \ \ / / '_ \   / /
@@ -42,16 +42,19 @@
 
 SmartFarmMeasure smf;
 
-void setup() 
+void setup()
 {
-  String BoardID = "F1";
+  String BoardID = "FE";
   int Watermark_Count = 6;
+  int pins[] = {1,2,4,6,7,8};
   int Temperature_Count = 2;
   String data;
   String decagon;
   
   smf.finishUp();
   Serial.begin(57600);
+
+  //415AC735 coord
 
   Wire.begin();
   //uncomment the next line to set RTC time from compiling
@@ -62,22 +65,28 @@ void setup()
   //sensor setup functions...
   smf.setupAll();
 
-  data = smf.readVolts() + " " + smf.readWM(Watermark_Count) + " " + smf.readTemps(Temperature_Count); 
   decagon = smf.readDecSensors();
-  
-  //print serial data section
-  Serial.println(BoardID + " " + data);//prints all data
-  Serial.println(BoardID + " " + decagon);
+  Serial.println("Test");
+  Serial.println(BoardID + " V " + smf.readVolts());
+  Serial.println(BoardID + " W " + smf.readWM(pins,Watermark_Count));
+  Serial.println(BoardID + " T " + smf.readTemps(Temperature_Count));
+  Serial.println(BoardID + " D " + smf.readDecSensors());
   Serial.flush();
   Serial.end();
   //wait a little bit after serial printings
   delay(2000);
 
-  //sd write section
-  smf.setupSD();
-  smf.write2SD(BoardID + " " + smf.timeStamp() + " " + data);//writes all data to SD
-  smf.write2SD(BoardID + " " + smf.timeStamp() + " " + decagon);
-  smf.write2SD("newline");
+  if(smf.checkSafeSDVolts())
+  {
+    //sd write section
+    smf.setupSD();
+    smf.write2SD(BoardID + " TS " + smf.timeStamp());
+    smf.write2SD(BoardID + " V " + smf.readVolts());
+    smf.write2SD(BoardID + " W " + smf.readWM(pins,Watermark_Count));
+    smf.write2SD(BoardID + " T " + smf.readTemps(Temperature_Count));
+    smf.write2SD(BoardID + " D " + smf.readDecSensors());
+    smf.write2SD("newline");
+  }
 
 }
 

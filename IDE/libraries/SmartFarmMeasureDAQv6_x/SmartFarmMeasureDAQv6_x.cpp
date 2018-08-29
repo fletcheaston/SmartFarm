@@ -5,11 +5,19 @@
 
 // Define the pins and hardware on the boards
 #define Coms2MCU 6 // Allows communication back to the MCU
-#define WMEvenPin 4 // Defines the even pin for reading each watermark
-#define WMOddPin 5 // Defines the odd pin for reading each watermark
-#define muxAnalogRead 0 // Defines the MUX analog pin
-#define readBatPin 6 // Defines the battery power pin
-#define readSolPin 7 // Defines the solar power pin
+
+int WMEvenPin = 4 // Defines the even pin for reading each watermark on 6.2
+int WMOddPin = 5 // Defines the odd pin for reading each watermark on 6.2
+int muxAnalogRead = 0 // Defines the MUX analog pin on 6.2
+
+int WMEvenPin = 8 // Defines the even pin for reading each watermark on 6.1
+int WMOddPin = 7 // Defines the odd pin for reading each watermark on 6.1
+int muxAnalogRead = 3 // Defines the MUX analog pin on 6.1
+
+// TODO: Figure out how to differentiate between 6.1 and 6.2 boards in software, on the fly. Adjust pin values as necessary
+
+#define READ_BAT_PIN 6 // Defines the battery power pin
+#define READ_SOL_PIN 7 // Defines the solar power pin
 #define DS3231_I2C_ADDRESS 0x68 // Defines the RTC address
 #define ONE_WIRE_BUS 3 // ???
 #define TEMPERATURE_PRECISION 12 // ???
@@ -21,7 +29,6 @@ DeviceAddress temp_device_address; // ???
 uint8_t stored_address[6][8]; // Stored the address of each temperature sensor
 int temperature_sensor_count = 0; // Counts the number of temperature sensors
 int decagon_sensor_count = 0; // Counts the number of decagon sensors
-int max_decagon_sensors = 3; // Defines the maximum number of decagon sensors
 const int chip_select = 10; // Defines the SD card chip info?
 SDI12 smartSDI12(DEC_PIN); // ???
 static byte address_register[8] = {0B00000000, 0B00000000, 0B00000000, 0B00000000, 0B00000000, 0B00000000, 0B00000000, 0B00000000}; // ???
@@ -352,8 +359,8 @@ String SmartFarmMeasure::readVolts()
 {
 	analogReference(EXTERNAL); // use AREF for reference voltage added 1/5/17
 	String result;
-	int BatVi = analogRead(readBatpin); //A6 Battery Voltage Pin
-	int SolVi = analogRead(readSolpin); //A7 Solar Voltage pin
+	int BatVi = analogRead(READ_BAT_PIN); //A6 Battery Voltage Pin
+	int SolVi = analogRead(READ_SOL_PIN); //A7 Solar Voltage pin
 	float BatVF = (BatVi * 2.0 * 3.3) / 1023.0; //battery voltage the 2.0 and 3600 should be measured, though each board will vary slightly
 	float SolVF = (SolVi * 2.0 * 3.3) / 1023.0; //solar voltage
 	result = String(BatVF, 2) + " " + String(SolVF, 2);
