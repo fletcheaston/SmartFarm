@@ -691,9 +691,11 @@ String SmartFarmMeasure::readTemps(int count)
                 }
 
                 float tempC;
-                char fbuff[8];
-                tempC = sensors.getTempC(temp);
-                dtostrf(tempC, 5, 2, fbuff);
+                //long tempC;
+                char fbuff[8]; //8ok
+                tempC = sensors.getTempC(temp); //uses 34 more bytes
+                //Serial.println(tempC);
+                dtostrf(tempC, 5, 2, fbuff); //dtostrf(FLOAT,WIDTH,PRECISION,BUFFER)
 
                 result += fbuff;
                 result += ' ';

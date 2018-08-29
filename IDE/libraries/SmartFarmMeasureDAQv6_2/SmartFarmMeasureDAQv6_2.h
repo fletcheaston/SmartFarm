@@ -25,11 +25,12 @@ class SmartFarmMeasure {
 		void setupDecSensors();
 		String readDecSensors();
 		void setupWM();
-		String readWM(int count);
+		String readWM(int pins[],int count);
 		void selectMuxPin(byte pin);
 		void setupAll();
 		String timeStamp();
 		String readVolts();
+		bool checkSafeSDVolts();
 		void readDS3231time(byte *second,
                     byte *minute,
                     byte *hour,

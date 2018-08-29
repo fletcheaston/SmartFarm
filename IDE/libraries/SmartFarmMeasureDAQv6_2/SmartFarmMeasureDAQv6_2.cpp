@@ -434,6 +434,21 @@ String SmartFarmMeasure::readVolts() //Battery & Solar voltage reporting
 	return result;
 }
 
+bool SmartFarmMeasure::checkSafeSDVolts()
+{
+        analogReference(EXTERNAL); // use AREF for reference voltage added 1/5/17
+	int BatVi = analogRead(readBatpin); //A6 Battery Voltage Pin
+	float BatVF = (BatVi * 2.0 * 3.3) / 1023.0; //battery voltage the 2.0 and 3600 should be measured, though each board will vary slightly
+        if(BatVF > 3.35)
+        {
+                return(true);
+        }
+        else
+        {
+                return(false);
+        }
+}
+
 /******************************************************************************/
 /* SD Card Functions */
 
@@ -620,7 +635,7 @@ void SmartFarmMeasure::setupDecSensors()
 /******************************************************************************/
 /* Read Sensor Functions */
 
-String SmartFarmMeasure::readWM(int count)
+String SmartFarmMeasure::readWM(int pins[],int count)
 {
 	byte WC = 0B00000000; //watermark connection check
 	int WMPin1 = WMEvenPin;
@@ -634,7 +649,7 @@ String SmartFarmMeasure::readWM(int count)
 		float Rs;
 		float R; //sensor resistance
 		float v; //volt measurements
-		selectMuxPin(i);
+		selectMuxPin(pins[i] - 1);
 		//take measurements 5 times
 		for (int j = 0; j < 5; j++)
 		{
