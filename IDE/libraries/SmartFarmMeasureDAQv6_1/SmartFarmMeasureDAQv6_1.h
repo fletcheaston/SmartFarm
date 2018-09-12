@@ -27,10 +27,11 @@ class SmartFarmMeasure {
 		void test2_setupWM();
 		//void readWM(String boardID);
 		String readWM();
+		String readWMstandard();
 		String test_readWM(String boardID);
 		String test2_readWM(String boardID);
 		void setupMUXAnalog();
-		String readMUXAnalog(String boardID);
+		String readMUXAnalog();
 		void selectMuxPin(byte pin);
 		void setupAll();
 		void runAll(String boardID);

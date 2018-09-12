@@ -733,11 +733,18 @@ void SmartFarmMeasure::selectMuxPin(byte pin) {
   }
 }
 
-String SmartFarmMeasure::readMUXAnalog(String boardID) {
+String SmartFarmMeasure::readWM()
+{
+	String result = "";
+	result = readWMstandard() + " " + readMUXAnalog();
+	return(result);
+}
+
+String SmartFarmMeasure::readMUXAnalog() {
   byte WC = 0B00000000; //watermark connection check
   int WMPin1 = muxWMdigitalEven;
   int WMPin2 = muxWMdigitalOdd;
-  String WMdata = boardID;
+  String WMdata = "";
   for (byte i = 0; i <= 2; i++) // Go through each port to read data
   {
     String Rstring = "";
@@ -804,7 +811,7 @@ String SmartFarmMeasure::readMUXAnalog(String boardID) {
   return WMdata;
 }
 
-String SmartFarmMeasure::readWM() {
+String SmartFarmMeasure::readWMstandard() {
   // Scan watermark connections
   byte WC = 0B00000000; //watermark connection check
   int WMPin1 = 4;
