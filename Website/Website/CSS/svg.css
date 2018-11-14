@@ -1,0 +1,49 @@
+rect
+{
+    fill-opacity: 0.5;
+    stroke: black;
+    stroke-width: 2;
+}
+
+rect.notSelected
+{
+    fill: red;
+}
+
+rect.notSelected:hover
+{
+    fill: orange;
+}
+
+rect.selected
+{
+    fill: green;
+}
+
+rect.selected:hover
+{
+    fill: blue;
+}
+
+circle
+{
+    fill-opacity: 0.5;
+    stroke: black;
+    stroke-width: 5;
+}
+
+circle.svg_button
+{
+    fill: red;
+}
+
+circle.svg_button:hover
+{
+    fill: green;
+}
+
+.svg_button_text
+{
+    fill: black;
+    font-size: 3em;
+}

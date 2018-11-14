@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+
+	<head>
+		<title>SmartFarm Web IDE v1.0</title>
+        <link rel="stylesheet" href="CSS/ide.css">
+        <link rel="stylesheet" href="CSS/select.css">
+
+    </head>
+
+    <body class="body" onload="onPageLoad()">
+
+        <div class="center_title">
+
+            <h1>
+                SmartFarm DAQ Web IDE
+            </h1>
+        </div>
+
+        <hr>
+
+        <div class="container nav">
+            <a href="home.html" class="area_button">Home</a>
+
+            <a href="graphic_ide.html" class="area_button area_button_selected">Graphic Ide</a>
+
+            <a href="text_ide.html" class="area_button">Text Ide</a>
+
+            <a href="faq.html" class="area_button">FAQ</a>
+        </div>
+
+        <hr>
+
+        <div class="container" id="graphic_ide_base">
+            <div class="img-overlay-wrap">
+
+                <img src="Images/board_6_2_flat.png" alt="SmartFarm DAQ Version 6.2" class="board_img" />
+
+                <select class="portA" id="portA">
+                    <option value="None">None</option>
+                </select>
+
+                <select class="portB" id="portB">
+                    <option value="None">None</option>
+                </select>
+
+                <select class="portC" id="portC">
+                    <option value="None">None</option>
+                </select>
+
+                <select class="portD1" id="portD1">
+                    <option value="None">None</option>
+                </select>
+
+                <select class="portD2" id="portD2">
+                    <option value="None">None</option>
+                </select>
+
+                <select class="portD3" id="portD3">
+                    <option value="None">None</option>
+                </select>
+
+                <select class="portD4" id="portD4">
+                    <option value="None">None</option>
+                </select>
+
+                <select class="portD5" id="portD5">
+                    <option value="None">None</option>
+                </select>
+
+                <select class="portD6" id="portD6">
+                    <option value="None">None</option>
+                </select>
+
+                <select class="portD7" id="portD7">
+                    <option value="None">None</option>
+                </select>
+
+                <select class="portD8" id="portD8">
+                    <option value="None">None</option>
+                </select>
+
+                <select class="portE" id="portE">
+                    <option value="None">None</option>
+                </select>
+
+                <select class="portF" id="portF">
+                    <option value="None">None</option>
+                </select>
+
+                <select class="SDCard" id="SDCard">
+                    <option value="None">None</option>
+                </select>
+
+            </div>
+        </div>
+        <hr>
+
+    </body>
+
+    <script type="text/javascript" src="JS/jquery/jquery.js"></script>
+    <script type="text/javascript">
+
+        function onPageLoad()
+        {
+            loadXMLBoards();
+        }
+
+        function loadXMLBoards()
+        {
+            var rawFile = new XMLHttpRequest();
+            rawFile.open("GET", "./Boards.xml", true);
+            rawFile.onreadystatechange = function()
+            {
+                if(rawFile.readyState === 4)
+                {
+                    if(rawFile.status === 200 || rawFile.status === 0)
+                    {
+                        var allText = rawFile.responseText;
+                        parseXML(allText);
+                    }
+                }
+            }
+            rawFile.send(null);
+        }
+
+        function parseXML(text)
+        {
+            var parser = new DOMParser();
+            var xmlDoc = parser.parseFromString(text,"text/xml");
+
+            var x = xmlDoc.getElementsByTagName("Sensor");
+
+            for(var i = 0;i < x.length;i++)
+            {
+                var port = x[i].getAttribute("port");
+                var sensor = x[i].childNodes[0].nodeValue;
+
+                if(port === "portD")
+                {
+                    for(var j = 0;j < 8;j++)
+                    {
+
+                        var option = document.createElement("option");
+                        option.setAttribute("value",sensor);
+                        var text = document.createTextNode(sensor);
+                        option.appendChild(text);
+
+                        var temp = port + (j + 1).toString();
+                        var select = document.getElementById(temp);
+                        select.appendChild(option);
+                    }
+                }
+                else
+                {
+
+                    var option = document.createElement("option");
+                    option.setAttribute("value",sensor);
+                    var text = document.createTextNode(sensor);
+                    option.appendChild(text);
+
+                    var select = document.getElementById(port);
+                    select.appendChild(option);
+                }
+
+            }
+        }
+
+    </script>
+
+</html>

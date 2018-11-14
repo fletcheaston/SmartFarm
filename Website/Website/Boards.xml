@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SmartFarm>
+
+    <board>
+        <Sensor port="portA">SDI12 (Decagon)</Sensor>
+        <Sensor port="portA">SDI12 (Rugged Decagon)</Sensor>
+        <Sensor port="portB">12C</Sensor>
+        <Sensor port="portC">Analog</Sensor>
+        <Sensor port="portD">Watermark Resistor</Sensor>
+        <Sensor port="portE">1Wire</Sensor>
+        <Sensor port="portF">Serial</Sensor>
+        <Sensor port="SDCard">MicroSD</Sensor>
+    </board>
+
+</SmartFarm>

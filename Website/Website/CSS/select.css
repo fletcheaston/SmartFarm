@@ -1,0 +1,122 @@
+
+select
+{
+    font-size: 1.5vw;
+    background-color: rgba(0,0,0,.1);
+    color: black;
+    position: absolute;
+    transform: translate(-50%, -50%);
+
+}
+
+.portA
+{
+    width: 11.9%;
+    height: 15.6%;
+    top: 64.4%;
+    left: 41.5%;
+}
+
+.portB
+{
+    width: 15.3%;
+    height: 15.6%;
+    top: 64.4%;
+    left: 58.95%;
+}
+
+.portC
+{
+    width: 19.9%;
+    height: 15.6%;
+    top: 64.4%;
+    left: 80.4%;
+}
+
+.portD1
+{
+    width: 6.7%;
+    height: 15.6%;
+    top: 86.3%;
+    left: 6.55%;
+}
+
+.portD2
+{
+    width: 6.7%;
+    height: 15.6%;
+    top: 86.3%;
+    left: 13.8%;
+}
+
+.portD3
+{
+    width: 6.7%;
+    height: 15.6%;
+    top: 86.3%;
+    left: 21.05%;
+}
+
+.portD4
+{
+    width: 6.7%;
+    height: 15.6%;
+    top: 86.3%;
+    left: 28.3%;
+}
+
+.portD5
+{
+    width: 6.7%;
+    height: 15.6%;
+    top: 86.3%;
+    left: 35.55%;
+}
+
+.portD6
+{
+    width: 6.7%;
+    height: 15.6%;
+    top: 86.3%;
+    left: 42.8%;
+}
+
+.portD7
+{
+    width: 6.7%;
+    height: 15.6%;
+    top: 86.3%;
+    left: 50.05%;
+}
+
+.portD8
+{
+    width: 6.7%;
+    height: 15.6%;
+    top: 86.3%;
+    left: 57.3%;
+}
+
+.portE
+{
+    width: 11.9%;
+    height: 15.6%;
+    top: 86.3%;
+    left: 71.14%;
+}
+
+.portF
+{
+    width: 15.2%;
+    height: 15.6%;
+    top: 86.3%;
+    left: 89.3%;
+}
+
+.SDCard
+{
+    width: 13.9%;
+    height: 20.9%;
+    top: 38.8%;
+    left: 76.75%;
+}

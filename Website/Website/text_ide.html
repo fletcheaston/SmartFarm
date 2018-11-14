@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+	<head>
+		<title>SmartFarm Web IDE v1.0</title>
+        <link rel="stylesheet" href="CSS/ide.css">
+        <link rel="stylesheet" href="CSS/select.css">
+
+    </head>
+
+    <body class="body">
+
+        <div class="center_title">
+
+            <h1>
+                SmartFarm DAQ Web IDE
+            </h1>
+        </div>
+
+        <hr>
+
+        <div class="container nav">
+            <a href="home.html" class="area_button">Home</a>
+
+            <a href="graphic_ide.html" class="area_button">Graphic Ide</a>
+
+            <a href="text_ide.html" class="area_button area_button_selected">Text Ide</a>
+
+            <a href="faq.html" class="area_button">FAQ</a>
+        </div>
+
+        <hr>
+
+        <div class="container editor" id="editor">
+function foo(items)
+{
+    var x = "All this is syntax highlighted";
+    return x;
+}
+        </div>
+        <hr>
+
+    </body>
+
+    <script src="JS/ace/ace.js" type="text/javascript" charset="utf-8"></script>
+    <script>
+        var fontSize = 16;
+        var editor = ace.edit("editor");
+        editor.setTheme("ace/theme/clouds_midnight");
+        editor.session.setMode("ace/mode/c_cpp");
+        document.getElementById('editor').style.fontSize=fontSize.toString() + "px";
+        editor.resize(true);
+    </script>
+
+</html>

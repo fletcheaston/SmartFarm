@@ -1,0 +1,87 @@
+.body
+{
+    min-width: 480px;
+}
+
+.center_title
+{
+    margin: auto;
+    width: 80%;
+    text-align: center;
+    font-size: 3em;
+}
+
+.nav
+{
+    display: flex;
+}
+
+.container
+{
+    height: auto;
+    width: 95%;
+    padding-left: 2.5%;
+    padding-right: 2.5%;
+    padding-bottom: 10px;
+    padding-top: 10px;
+}
+
+.editor
+{
+    min-height: 720px;
+}
+
+.area_button
+{
+    font-size: 2em;
+    text-decoration: none;
+    color: white;
+    text-align: center;
+    background-color: black;
+    width: 25%;
+    display: inline-block;
+}
+
+.area_button:visited
+{
+
+}
+
+.area_button:hover
+{
+    background-color: white;
+    color: red;
+}
+
+.area_button_selected
+{
+    background-color: white;
+    color: red;
+}
+
+.overlay
+{
+    position: absolute;
+}
+
+.board_img
+{
+    background-color: green;
+    width: 100%;
+    height: auto;
+    position: relative;
+    display: inline-block;
+}
+
+.img-overlay-wrap
+{
+    position: relative;
+    display: block;
+}
+
+.img-overlay-wrap svg
+{
+    position: absolute;
+    top: 0;
+    left: 0;
+}
