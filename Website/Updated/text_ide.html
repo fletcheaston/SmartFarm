@@ -32,11 +32,18 @@
         <hr>
 
         <div class="container editor" id="editor">
-function foo(items)
-{
-    var x = "All this is syntax highlighted";
-    return x;
-}
+    int main ()
+    {
+        int a, b=3; /* foobar */
+        a = b; // single line comment\
+            continued
+        a+=2; // equivalent to a=a+2
+        cout << a;
+        #if VERBOSE >= 2
+            prints("trace message\n");
+        #endif
+        return 0;
+    }
         </div>
         <hr>
 
@@ -46,7 +53,7 @@ function foo(items)
     <script>
         var fontSize = 16;
         var editor = ace.edit("editor");
-        editor.setTheme("ace/theme/clouds_midnight");
+        editor.setTheme("ace/theme/gob");
         editor.session.setMode("ace/mode/c_cpp");
         document.getElementById('editor').style.fontSize=fontSize.toString() + "px";
         editor.resize(true);
