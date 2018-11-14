@@ -173,7 +173,7 @@ void SmartFarmMeasure::setupAll() {
   Serial.begin(57600);
   setupSD();
   delay(1000);
-  setupWM();
+  test2_setupWM();
   delay(1000);
   setupTemps();
   delay(1000);
@@ -324,8 +324,10 @@ void SmartFarmMeasure::setupTemps() {//temp setup function
 }
 //new for v6.1 and v6.2, east and west sensors
 String SmartFarmMeasure::readTemps(int count)
-{String NA = "NA";
-  String results = "";
+{
+  int numberOfDevices = 0;
+  String NA = "NA";
+  String results = " ";
   int tempPosition[] = {0,1,2,3,4,5,6,7,8,9};
   uint8_t temp[8];
   //DeviceAddress temp;// doesn't sort with this type
@@ -371,11 +373,11 @@ String SmartFarmMeasure::readTemps(int count)
     //results += "12.34 ";
     results += fbuff;
     results += ' ';
+	numberOfDevices += 1;
   }
-  if (numberOfDevices == 0 ){
-	  for (int i = 0; i <= 2; i++) {
-      results += NA + ' '; //should print NA NA NA if no sensors found.
-    }
+  for (int i = numberOfDevices; i < count; i++)
+  {
+	results += NA + ' '; //should print NA NA NA if no sensors found.
   }
 
   //Serial.println(results);
@@ -432,7 +434,7 @@ void SmartFarmMeasure::setupDecSensors() {
   }
 
   if (!found) {
-    Serial.println("No DECAGON 5TE sensors found.");
+    //Serial.println("No DECAGON 5TE sensors found.");
   } // stop here
 
   String foundstr = "Found ";
@@ -446,7 +448,7 @@ void SmartFarmMeasure::setupDecSensors() {
 String SmartFarmMeasure::readDecSensors() {
   String result = "";
   String NA = "NA";
-  int placeholder = 1; //numDecSesn is now the # of placeholdersMaxDecSens - numDecSens; // 3-count, expected value = 3-3,3-2,3-1,3-0 = 0,1,2,3 NAs to print
+  int placeholder = 0; //numDecSesn is now the # of placeholdersMaxDecSens - numDecSens; // 3-count, expected value = 3-3,3-2,3-1,3-0 = 0,1,2,3 NAs to print
   // result ="Reading Decagon 5TE Sensors... \n";
   // result += "VWC(Dielectric) EC(dS/m) Temperature(Deg C)\n";
 
@@ -735,9 +737,12 @@ void SmartFarmMeasure::selectMuxPin(byte pin) {
 
 String SmartFarmMeasure::readWM()
 {
-	String result = "";
-	result = readWMstandard() + " " + readMUXAnalog();
-	return(result);
+	String first = test2_readWM("");
+	delay(1000);
+	String waste = readTemps(2);
+	delay(1000);
+	String second = readMUXAnalog();
+	return(first + second);
 }
 
 String SmartFarmMeasure::readMUXAnalog() {
@@ -807,7 +812,7 @@ String SmartFarmMeasure::readMUXAnalog() {
 	  digitalWrite(selectPins[i],LOW);
 	  delayMilliseconds(5);
   }
-  WMdata += ' ';
+  //WMdata += ' ';
   return WMdata;
 }
 
@@ -868,7 +873,7 @@ String SmartFarmMeasure::readWMstandard() {
     }
     WMdata = WMdata + ' ' + Rstring; // resistor reading for sensor i
   }
-  WMdata += ' ';
+  //WMdata += ' ';
   digitalWrite(WMPin1, LOW); // Shut down the watermark power
   digitalWrite(WMPin2, LOW);
   //write2SD(WMdata); //write
@@ -939,7 +944,6 @@ String SmartFarmMeasure::test2_readWM(String boardID) {
     WMdata = WMdata + ' ' + Rstring; // resistor reading for sensor i
 
   }//finish each port*/
-  WMdata += ' ';
   return WMdata;
 }
 

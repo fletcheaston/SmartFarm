@@ -1,5 +1,5 @@
 /*
-  Yeah _____          ____            __   ___
+   _____          ____            __   ___
   |  __ \   /\   / __ \          / /  |__ \
   | |  | | /  \ | |  | | __   __/ /_     ) |
   | |  | |/ /\ \| |  | | \ \ / / '_ \   / /
@@ -44,9 +44,7 @@ SmartFarmMeasure smf;
 
 void setup()
 {
-  String BoardID = "FE";
-  int Watermark_Count = 6;
-  int pins[] = {1,2,4,6,7,8};
+  String BoardID = "FL";
   int Temperature_Count = 2;
   String data;
   String decagon;
@@ -65,11 +63,16 @@ void setup()
   //sensor setup functions...
   smf.setupAll();
 
-  decagon = smf.readDecSensors();
-  Serial.println("Test");
   Serial.println(BoardID + " V " + smf.readVolts());
-  Serial.println(BoardID + " W " + smf.readWM(pins,Watermark_Count));
-  Serial.println(BoardID + " T " + smf.readTemps(Temperature_Count));
+  Serial.println(BoardID + " W1 " + smf.readWM(1));
+  Serial.println(BoardID + " W2 " + smf.readWM(2));
+  Serial.println(BoardID + " W3 " + smf.readWM(3));
+  Serial.println(BoardID + " W4 " + smf.readWM(4));
+  Serial.println(BoardID + " W5 " + smf.readWM(5));
+  Serial.println(BoardID + " W6 " + smf.readWM(6));
+  Serial.println(BoardID + " W7 " + smf.readWM(7));
+  Serial.println(BoardID + " W8 " + smf.readWM(8));
+  Serial.println(BoardID + " T " + smf.readTemps());
   Serial.println(BoardID + " D " + smf.readDecSensors());
   Serial.flush();
   Serial.end();
@@ -82,8 +85,15 @@ void setup()
     smf.setupSD();
     smf.write2SD(BoardID + " TS " + smf.timeStamp());
     smf.write2SD(BoardID + " V " + smf.readVolts());
-    smf.write2SD(BoardID + " W " + smf.readWM(pins,Watermark_Count));
-    smf.write2SD(BoardID + " T " + smf.readTemps(Temperature_Count));
+    Serial.println(BoardID + " W1 " + smf.readWM(1));
+    Serial.println(BoardID + " W2 " + smf.readWM(2));
+    Serial.println(BoardID + " W3 " + smf.readWM(3));
+    Serial.println(BoardID + " W4 " + smf.readWM(4));
+    Serial.println(BoardID + " W5 " + smf.readWM(5));
+    Serial.println(BoardID + " W6 " + smf.readWM(6));
+    Serial.println(BoardID + " W7 " + smf.readWM(7));
+    Serial.println(BoardID + " W8 " + smf.readWM(8));
+    smf.write2SD(BoardID + " T " + smf.readTemps());
     smf.write2SD(BoardID + " D " + smf.readDecSensors());
     smf.write2SD("newline");
   }

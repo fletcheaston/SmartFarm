@@ -19,13 +19,13 @@ class SmartFarmMeasure {
 		void setupTemps();
 		//void readTemps(String boardID);
 		//String readTemps(String boardID);
-		String readTemps(int count);
+		String readTemps();
 		void setupSD();
 		void write2SD(String dataString);
 		void setupDecSensors();
 		String readDecSensors();
 		void setupWM();
-		String readWM(int pins[],int count);
+		String readWM(int pin);
 		void selectMuxPin(byte pin);
 		void setupAll();
 		String timeStamp();

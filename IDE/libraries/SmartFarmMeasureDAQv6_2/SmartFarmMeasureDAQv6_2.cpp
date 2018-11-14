@@ -635,93 +635,92 @@ void SmartFarmMeasure::setupDecSensors()
 /******************************************************************************/
 /* Read Sensor Functions */
 
-String SmartFarmMeasure::readWM(int pins[],int count)
+String SmartFarmMeasure::readWM(int pin)
 {
 	byte WC = 0B00000000; //watermark connection check
 	int WMPin1 = WMEvenPin;
 	int WMPin2 = WMOddPin;
 	String result;
 
-	for (byte i = 0; i < count; i++) // Go through ports 1 to count to read data
-	{
-		String Rstring = "";
-		float RArray[5];
-		float Rs;
-		float R; //sensor resistance
-		float v; //volt measurements
-		selectMuxPin(pins[i] - 1);
-		//take measurements 5 times
-		for (int j = 0; j < 5; j++)
-		{
-			digitalWrite(WMPin1, LOW); // sets the pin on
-			digitalWrite(WMPin2, HIGH); // sets the pin off
-			delayMilliseconds(5); // 100 Hz*/
+    String Rstring = "";
+    float RArray[5];
+    float Rs;
+    float R; //sensor resistance
+    float v; //volt measurements
 
-			digitalWrite(WMPin1, HIGH); // sets the pin on
-			digitalWrite(WMPin2, LOW); // sets the pin off
-			delayMilliseconds(5); // 100 Hz
-			int a = analogRead(muxAnalogRead);//
+    // selects the correct port
+    selectMuxPin(pin - 1);
 
-			digitalWrite(WMPin1, LOW); // Shut down the watermark power
-			digitalWrite(WMPin2, LOW);
+    //take measurements 5 times
+    for (int j = 0; j < 5; j++)
+    {
+        digitalWrite(WMPin1, LOW); // sets the pin on
+        digitalWrite(WMPin2, HIGH); // sets the pin off
+        delayMilliseconds(5); // 100 Hz*/
 
-			//////// do the math after the watermark is powered off
-			v = 3.3 * a / 1023.0; //take another reading
-			R = 10000.0 * v / (3.3 - v); //voltage divider rule to find resistance value
-			if (R > 0.0)  //watermark200ss sensors should range between...
-      			{
-        			RArray[j] = R;
-      			}
-      			else
-			{
-        			RArray[j] = -1;
-      			}
-    		}
+        digitalWrite(WMPin1, HIGH); // sets the pin on
+        digitalWrite(WMPin2, LOW); // sets the pin off
+        delayMilliseconds(5); // 100 Hz
+        int a = analogRead(muxAnalogRead);//
 
-		// sort the resistance array and calculate the average
-    		for (int k = 0; k < 4; k++)
-		{
-			for (int o = 0; o < (5 - (k + 1)); o++)
-			{
-				if (RArray[o] > RArray[o + 1])
-				{
-					float temp = RArray[o];
-					RArray[o] = RArray[o + 1];
-					RArray[o + 1] = temp;
-				}
-			}
-		}
-		Rs = (RArray[1] + RArray[2] + RArray[3]) / 3;
+        digitalWrite(WMPin1, LOW); // Shut down the watermark power
+        digitalWrite(WMPin2, LOW);
 
-		if (Rs > 0.0)
-		{
-			Rstring = String(Rs);
-			if(Rstring == " INF")
-			{
-				Rstring = "INF";
-			}
-		}
-		else
-		{
-			Rstring = F("NA");
-		}
+        //////// do the math after the watermark is powered off
+        v = 3.3 * a / 1023.0; //take another reading
+        R = 10000.0 * v / (3.3 - v); //voltage divider rule to find resistance value
+        if (R > 0.0)  //watermark200ss sensors should range between...
+        {
+            RArray[j] = R;
+        }
+        else
+        {
+            RArray[j] = -1;
+        }
+    }
 
-		result += Rstring;
-		result += " ";
-	}
+    // sort the resistance array and calculate the average
+    for (int k = 0; k < 4; k++)
+    {
+        for (int o = 0; o < (5 - (k + 1)); o++)
+        {
+            if (RArray[o] > RArray[o + 1])
+            {
+                float temp = RArray[o];
+                RArray[o] = RArray[o + 1];
+                RArray[o + 1] = temp;
+            }
+        }
+    }
+    Rs = (RArray[1] + RArray[2] + RArray[3]) / 3;
 
-	//finish each port
-	for (int i = 0; i < 3; i++)
+    if (Rs > 0.0)
+    {
+        Rstring = String(Rs);
+        if(Rstring == " INF")
+        {
+            Rstring = "INF";
+        }
+    }
+    else
+    {
+        Rstring = F("NA");
+    }
+
+    result += Rstring;
+    result += " ";
+
+	for (int i = 0;i < 3;i++)
 	{
 		pinMode(selectPins[i], OUTPUT);
 		digitalWrite(selectPins[i], LOW);
 		delayMilliseconds(5);
-  	}
+	}
 
   	return result;
 }
 
-String SmartFarmMeasure::readTemps(int count)
+String SmartFarmMeasure::readTemps()
 {
 	String result;
 	uint8_t *address;
@@ -730,15 +729,22 @@ String SmartFarmMeasure::readTemps(int count)
 
 	sensors.requestTemperatures(); // Send the command to get temperatures, gets senors ready for measurement
 	int tempPosition[] = {0,1,2,3,4,5,6,7,8,9};
-	// If you're reading more than 10 temperature sensors... don't...
 
-	for (int i = 0;i < count;i++)
+	for (int i = 0;i < 8;i++)
 	{
 		address  = storedAddress[tempPosition[i]];
 		data = sensors.getTempC(address);
 		dtostrf(data, 5, 2, fbuff);
-		result += fbuff;
-		result += " ";
+        if((strcmp(fbuff, "-127.00") == 0))
+        {
+            i = 100;
+            // end this loop
+        }
+        else
+        {
+            result += fbuff;
+            result += " ";
+        }
 	}
 
 	return result;
