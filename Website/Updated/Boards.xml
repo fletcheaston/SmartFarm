@@ -7,7 +7,7 @@
         <Sensor port="portB">12C</Sensor>
         <Sensor port="portC">Analog</Sensor>
         <Sensor port="portD">Watermark Resistor</Sensor>
-        <Sensor port="portE">1Wire</Sensor>
+        <Sensor port="portE">Temperature</Sensor>
         <Sensor port="portF">Serial</Sensor>
         <Sensor port="SDCard">MicroSD</Sensor>
     </board>

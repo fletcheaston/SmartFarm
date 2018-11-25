@@ -96,6 +96,8 @@
         </div>
         <hr>
 
+        <button onclick="saveDataForEditor()">Click me</button>
+
     </body>
 
     <script type="text/javascript" src="JS/jquery/jquery.js"></script>
@@ -164,6 +166,29 @@
                 }
 
             }
+        }
+
+        function saveDataForEditor()
+        {
+            var board = new Object();
+            board.SDCard = document.getElementById("SDCard").value;
+            board.portA = document.getElementById("portA").value;
+            board.portB = document.getElementById("portB").value;
+            board.portC = document.getElementById("portC").value;
+            board.portD1 = document.getElementById("portD1").value;
+            board.portD2 = document.getElementById("portD2").value;
+            board.portD3 = document.getElementById("portD3").value;
+            board.portD4 = document.getElementById("portD4").value;
+            board.portD5 = document.getElementById("portD5").value;
+            board.portD6 = document.getElementById("portD6").value;
+            board.portD7 = document.getElementById("portD7").value;
+            board.portD8 = document.getElementById("portD8").value;
+            board.portE = document.getElementById("portE").value;
+            board.portF = document.getElementById("portF").value;
+            var boardString = JSON.stringify(board);
+            console.log(boardString);
+            localStorage.setItem("SmartFarmBoard", boardString);
+            window.open("text_ide.html");
         }
 
     </script>
