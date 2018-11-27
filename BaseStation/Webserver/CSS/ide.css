@@ -8,7 +8,7 @@
     margin: auto;
     width: 80%;
     text-align: center;
-    font-size: 3em;
+    font-size: 3vw;
 }
 
 .nav
@@ -33,7 +33,7 @@
 
 .area_button
 {
-    font-size: 2em;
+    font-size: 3vw;
     text-decoration: none;
     color: white;
     text-align: center;
@@ -86,13 +86,29 @@
     left: 0;
 }
 
-.previewButton
+.roundPreviewButton
 {
     width: 16%;
     height: 22%;
     font-size: 2.5vw;
     background-color: black;
-    color: red;
+    color: green;
+    text-align: center;
+    position: absolute;
+    transform: translate(-50%, -50%);
+    margin: 4px 2px;
+    top: 10%;
+    left: 8%;
+    border-radius: 50%;
+}
+
+.roundServerButton
+{
+    width: 16%;
+    height: 22%;
+    font-size: 2.5vw;
+    background-color: black;
+    color: green;
     text-align: center;
     position: absolute;
     transform: translate(-50%, -50%);

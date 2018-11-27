@@ -44,8 +44,8 @@ with open("split_data_ " + data_type + ".txt", "w") as f:
 
 		data_line = data_line.replace("inf","0");
 		data_line = data_line.replace("NA","0");
-		#data_line = data_line.replace("-127.00","0");
-		#data_line = data_line.replace("85.00","0");
+		data_line = data_line.replace("-127.00","0");
+		data_line = data_line.replace("85.00","0");
 
 		f.write(data_line);
 		f.write("\n");
