@@ -10,7 +10,7 @@ raw_data_log = "/var/log/smartfarm/SmartFarmData.log";
 
 # Used to record each action of the scripts. Contains all data from the log_action(string) function.
 # Actions that should be logged include "reading serial data", "parsing serial data", errors, etc.
-action_log = "/home/pi/SmartFarm_CurrentDAQ/action_log.txt";
+action_log = "/var/log/smartfarm/action_log.txt";
 
 def current_timestamp():
     temp = datetime.datetime.now();
@@ -23,7 +23,7 @@ def log_raw_data(string):
             file.write(line);
 
         log_action("Wrote raw data to log.");
-        
+
         print("Logged data: {!r}".format(line));
 
     except:
