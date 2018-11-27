@@ -1,13 +1,14 @@
 <?php
-$dir = "/var/log";
+$dir = "./src";
 if ( !file_exists($dir) ) {
     mkdir ($dir, 0744);
 }
 
 session_start();
 
-file_put_contents ($dir.'/program.txt', $_POST['program']);
+file_put_contents ($dir.'/program.ino', $_POST['program']);
 
-$_SESSION["my_data"] = $_POST['program'];
-echo "data recieved = " . $_POST['program'];
+echo "Program saved!";
+
+exec("sudo -u www-data python ./test.py")
 ?>
