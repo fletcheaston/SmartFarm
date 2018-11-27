@@ -60,7 +60,7 @@
         {
             $.ajax( {   type: 'POST',
                         data: {'program':ace.edit("editor").getValue() },
-                        url: './fileSave.php',
+                        url: './PHP/fileSave.php',
                         success: function ( data ) {
                             alert( data );
                         },
