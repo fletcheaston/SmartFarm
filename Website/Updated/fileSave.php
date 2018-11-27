@@ -4,8 +4,8 @@
 
 <?php
 session_start();
-$_SESSION["my_data"] = $_POST['action'];
-echo "data recieved = " . $_POST['action'];
+$_SESSION["my_data"] = $_POST['program'];
+echo "data recieved = " . $_POST['program'];
 ?>
 
 </body>

@@ -46,12 +46,6 @@
 
         <hr>
 
-        <form action="welcome.php" method="post">
-Name: <input type="text" name="name"><br>
-E-mail: <input type="text" name="email"><br>
-<input type="submit">
-</form>
-
         <button onclick="fileSave()">Click me</button>
 
     </body>
@@ -63,7 +57,7 @@ E-mail: <input type="text" name="email"><br>
         function fileSave()
         {
             $.ajax( {   type: 'POST',
-                        data: {'action':document.getElementById("editor").innerHTML },
+                        data: {'program':ace.edit("editor").getValue() },
                         url: './fileSave.php',
                         success: function ( data ) {
                             alert( data );
