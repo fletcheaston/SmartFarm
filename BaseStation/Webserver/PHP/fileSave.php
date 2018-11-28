@@ -1,5 +1,5 @@
 <?php
-$dir = "/var/log/SmartFarmFiles";
+$dir = "../Platformio/src";
 if ( !file_exists($dir) ) {
     mkdir ($dir, 0744);
 }
@@ -10,5 +10,4 @@ file_put_contents ($dir.'/program.ino', $_POST['program']);
 
 echo "Program saved!";
 
-//exec("sudo python ./test.py")
 ?>

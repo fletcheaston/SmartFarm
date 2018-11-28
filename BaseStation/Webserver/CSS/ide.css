@@ -50,13 +50,13 @@
 .area_button:hover
 {
     background-color: white;
-    color: red;
+    color: green;
 }
 
 .area_button_selected
 {
     background-color: white;
-    color: red;
+    color: green;
 }
 
 .overlay
