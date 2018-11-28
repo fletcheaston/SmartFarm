@@ -1,0 +1,28 @@
+{
+  "build": {
+    "core": "smartfarm",
+    "f_cpu": "8000000L",
+    "mcu": "atmega328p",
+    "variant": "smartfarm"
+  },
+  "frameworks": [
+    "arduino"
+  ],
+  "fuses": {
+    "efuse": "0xFE",
+    "hfuse": "0xDA",
+    "lfuse": "0xE2",
+    "lock": "0x0F",
+    "unlock": "0x3F"
+  },
+  "name": "SmartFarm Board v6.2",
+  "upload": {
+    "maximum_ram_size": 2048,
+    "maximum_size": 32256,
+    "protocol": "arduino",
+    "require_upload_port": true,
+    "speed": 57600
+  },
+  "url": "www.fletcheaston.com",
+  "vendor": "CalPoly"
+}
