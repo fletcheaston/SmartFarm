@@ -17,7 +17,7 @@ SmartFarmMeasure smf;
 void setup()
 {
   String BoardID = "FL";
-  
+
   smf.finishUp();
   Serial.begin(57600);
   Wire.begin();
@@ -26,14 +26,7 @@ void setup()
   smf.setupAll();
 
   Serial.println(BoardID + " V " + smf.readVolts());
-  Serial.println(BoardID + " W1 " + smf.readWM(1));
-  Serial.println(BoardID + " W2 " + smf.readWM(2));
-  Serial.println(BoardID + " W3 " + smf.readWM(3));
-  Serial.println(BoardID + " W4 " + smf.readWM(4));
-  Serial.println(BoardID + " W5 " + smf.readWM(5));
-  Serial.println(BoardID + " W6 " + smf.readWM(6));
-  Serial.println(BoardID + " W7 " + smf.readWM(7));
-  Serial.println(BoardID + " W8 " + smf.readWM(8));
+  Serial.println(BoardID + " W " + smf.readWM(1) + " " + smf.readWM(2) + " " + smf.readWM(3) + " " + smf.readWM(4) + " " + smf.readWM(5) + " " + smf.readWM(6));
   Serial.println(BoardID + " T " + smf.readTemps());
   Serial.println(BoardID + " D " + smf.readDecSensors());
   Serial.flush();
